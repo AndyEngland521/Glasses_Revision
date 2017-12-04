@@ -1335,11 +1335,7 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <part name="SUPPLY252" library="SparkFun-PowerSymbols" deviceset="VCC" device=""/>
 <part name="GND252" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 <part name="J1" library="SparkFun-Connectors" deviceset="QWIIC_CONNECTOR" device="JS-1MM"/>
-<part name="SUPPLY253" library="SparkFun-PowerSymbols" deviceset="VCC" device=""/>
-<part name="GND253" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 <part name="J2" library="SparkFun-Connectors" deviceset="QWIIC_CONNECTOR" device="JS-1MM"/>
-<part name="SUPPLY254" library="SparkFun-PowerSymbols" deviceset="VCC" device=""/>
-<part name="GND254" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -1432,6 +1428,7 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <instance part="U28" gate="G$1" x="220.98" y="50.8"/>
 <instance part="SUPPLY28" gate="G$1" x="205.74" y="63.5"/>
 <instance part="GND28" gate="1" x="205.74" y="43.18"/>
+<instance part="J2" gate="G$1" x="10.16" y="162.56"/>
 </instances>
 <busses>
 </busses>
@@ -1442,6 +1439,9 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <pinref part="U1" gate="G$1" pin="VCC"/>
 <wire x1="20.32" y1="175.26" x2="20.32" y2="162.56" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="162.56" x2="25.4" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="J2" gate="G$1" pin="2"/>
+<wire x1="17.78" y1="162.56" x2="20.32" y2="162.56" width="0.1524" layer="91"/>
+<junction x="20.32" y="162.56"/>
 </segment>
 <segment>
 <pinref part="SUPPLY2" gate="G$1" pin="VCC"/>
@@ -1612,6 +1612,9 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <pinref part="U1" gate="G$1" pin="GND"/>
 <wire x1="20.32" y1="157.48" x2="20.32" y2="160.02" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="160.02" x2="25.4" y2="160.02" width="0.1524" layer="91"/>
+<pinref part="J2" gate="G$1" pin="1"/>
+<wire x1="17.78" y1="160.02" x2="20.32" y2="160.02" width="0.1524" layer="91"/>
+<junction x="20.32" y="160.02"/>
 </segment>
 <segment>
 <pinref part="GND2" gate="1" pin="GND"/>
@@ -2191,6 +2194,20 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <wire x1="233.68" y1="53.34" x2="236.22" y2="53.34" width="0.1524" layer="91"/>
 <label x="236.22" y="53.34" size="1.27" layer="95" font="vector" xref="yes"/>
 <label x="236.22" y="53.34" size="1.27" layer="95" font="vector" xref="yes"/>
+</segment>
+</net>
+<net name="N$270" class="0">
+<segment>
+<pinref part="J2" gate="G$1" pin="3"/>
+<pinref part="U1" gate="G$1" pin="DI"/>
+<wire x1="17.78" y1="165.1" x2="25.4" y2="165.1" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$490" class="0">
+<segment>
+<pinref part="J2" gate="G$1" pin="4"/>
+<pinref part="U1" gate="G$1" pin="CI"/>
+<wire x1="17.78" y1="167.64" x2="25.4" y2="167.64" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
@@ -4864,9 +4881,7 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <instance part="U140" gate="G$1" x="220.98" y="50.8"/>
 <instance part="SUPPLY140" gate="G$1" x="205.74" y="63.5"/>
 <instance part="GND140" gate="1" x="205.74" y="43.18"/>
-<instance part="J1" gate="G$1" x="243.84" y="124.46" rot="MR0"/>
-<instance part="SUPPLY253" gate="G$1" x="233.68" y="137.16"/>
-<instance part="GND253" gate="1" x="233.68" y="116.84"/>
+<instance part="J1" gate="G$1" x="10.16" y="88.9"/>
 </instances>
 <busses>
 </busses>
@@ -4961,6 +4976,9 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <pinref part="U127" gate="G$1" pin="VCC"/>
 <wire x1="20.32" y1="101.6" x2="20.32" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="88.9" x2="25.4" y2="88.9" width="0.1524" layer="91"/>
+<pinref part="J1" gate="G$1" pin="2"/>
+<wire x1="17.78" y1="88.9" x2="20.32" y2="88.9" width="0.1524" layer="91"/>
+<junction x="20.32" y="88.9"/>
 </segment>
 <segment>
 <pinref part="SUPPLY128" gate="G$1" pin="VCC"/>
@@ -5039,12 +5057,6 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <pinref part="U140" gate="G$1" pin="VCC"/>
 <wire x1="205.74" y1="63.5" x2="205.74" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="50.8" x2="208.28" y2="50.8" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="SUPPLY253" gate="G$1" pin="VCC"/>
-<pinref part="J1" gate="G$1" pin="2"/>
-<wire x1="233.68" y1="137.16" x2="233.68" y2="124.46" width="0.1524" layer="91"/>
-<wire x1="233.68" y1="124.46" x2="236.22" y2="124.46" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -5137,6 +5149,9 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <pinref part="U127" gate="G$1" pin="GND"/>
 <wire x1="20.32" y1="83.82" x2="20.32" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="86.36" x2="25.4" y2="86.36" width="0.1524" layer="91"/>
+<pinref part="J1" gate="G$1" pin="1"/>
+<wire x1="17.78" y1="86.36" x2="20.32" y2="86.36" width="0.1524" layer="91"/>
+<junction x="20.32" y="86.36"/>
 </segment>
 <segment>
 <pinref part="GND128" gate="1" pin="GND"/>
@@ -5215,12 +5230,6 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <pinref part="U140" gate="G$1" pin="GND"/>
 <wire x1="205.74" y1="45.72" x2="205.74" y2="48.26" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="48.26" x2="208.28" y2="48.26" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="GND253" gate="1" pin="GND"/>
-<pinref part="J1" gate="G$1" pin="1"/>
-<wire x1="233.68" y1="119.38" x2="233.68" y2="121.92" width="0.1524" layer="91"/>
-<wire x1="233.68" y1="121.92" x2="236.22" y2="121.92" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$217" class="0">
@@ -5607,13 +5616,7 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <segment>
 <pinref part="U127" gate="G$1" pin="DI"/>
 <wire x1="17.78" y1="91.44" x2="25.4" y2="91.44" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$270" class="0">
-<segment>
-<pinref part="U126" gate="G$1" pin="CO"/>
-<wire x1="236.22" y1="129.54" x2="233.68" y2="129.54" width="0.1524" layer="91"/>
-<pinref part="J1" gate="G$1" pin="4"/>
+<pinref part="J1" gate="G$1" pin="3"/>
 </segment>
 </net>
 <net name="CK5" class="0">
@@ -5649,13 +5652,9 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <segment>
 <pinref part="U127" gate="G$1" pin="CI"/>
 <wire x1="25.4" y1="93.98" x2="22.86" y2="93.98" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$490" class="0">
-<segment>
-<pinref part="U126" gate="G$1" pin="DO"/>
-<wire x1="233.68" y1="127" x2="236.22" y2="127" width="0.1524" layer="91"/>
-<pinref part="J1" gate="G$1" pin="3"/>
+<pinref part="J1" gate="G$1" pin="4"/>
+<wire x1="17.78" y1="93.98" x2="25.4" y2="93.98" width="0.1524" layer="91"/>
+<junction x="25.4" y="93.98"/>
 </segment>
 </net>
 </nets>
@@ -7375,16 +7374,16 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 </net>
 <net name="N$365" class="0">
 <segment>
-<pinref part="U190" gate="G$1" pin="CO"/>
-<pinref part="U191" gate="G$1" pin="CI"/>
-<wire x1="50.8" y1="55.88" x2="55.88" y2="55.88" width="0.1524" layer="91"/>
+<pinref part="U190" gate="G$1" pin="DO"/>
+<pinref part="U191" gate="G$1" pin="DI"/>
+<wire x1="50.8" y1="53.34" x2="55.88" y2="53.34" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$366" class="0">
 <segment>
-<pinref part="U191" gate="G$1" pin="DI"/>
-<pinref part="U190" gate="G$1" pin="DO"/>
-<wire x1="55.88" y1="53.34" x2="50.8" y2="53.34" width="0.1524" layer="91"/>
+<pinref part="U190" gate="G$1" pin="CO"/>
+<pinref part="U191" gate="G$1" pin="CI"/>
+<wire x1="50.8" y1="55.88" x2="55.88" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
@@ -8139,32 +8138,6 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <wire x1="226.06" y1="91.44" x2="220.98" y2="91.44" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$423" class="0">
-<segment>
-<pinref part="U219" gate="G$1" pin="DI"/>
-<wire x1="38.1" y1="15.24" x2="43.18" y2="15.24" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$424" class="0">
-<segment>
-<pinref part="U219" gate="G$1" pin="CI"/>
-<wire x1="38.1" y1="17.78" x2="43.18" y2="17.78" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$425" class="0">
-<segment>
-<pinref part="U219" gate="G$1" pin="CO"/>
-<pinref part="U220" gate="G$1" pin="CI"/>
-<wire x1="68.58" y1="17.78" x2="73.66" y2="17.78" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$426" class="0">
-<segment>
-<pinref part="U219" gate="G$1" pin="DO"/>
-<pinref part="U220" gate="G$1" pin="DI"/>
-<wire x1="68.58" y1="15.24" x2="73.66" y2="15.24" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$427" class="0">
 <segment>
 <pinref part="U220" gate="G$1" pin="DO"/>
@@ -8247,6 +8220,34 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <pinref part="U197" gate="G$1" pin="DI"/>
 <wire x1="12.7" y1="127" x2="5.08" y2="127" width="0.1524" layer="91"/>
 <label x="5.08" y="127" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
+</segment>
+</net>
+<net name="N$425" class="0">
+<segment>
+<pinref part="U219" gate="G$1" pin="CO"/>
+<pinref part="U220" gate="G$1" pin="CI"/>
+<wire x1="68.58" y1="17.78" x2="73.66" y2="17.78" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$426" class="0">
+<segment>
+<pinref part="U220" gate="G$1" pin="DI"/>
+<pinref part="U219" gate="G$1" pin="DO"/>
+<wire x1="73.66" y1="15.24" x2="68.58" y2="15.24" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$423" class="0">
+<segment>
+<pinref part="U218" gate="G$1" pin="CO"/>
+<pinref part="U219" gate="G$1" pin="CI"/>
+<wire x1="38.1" y1="17.78" x2="43.18" y2="17.78" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$424" class="0">
+<segment>
+<pinref part="U219" gate="G$1" pin="DI"/>
+<pinref part="U218" gate="G$1" pin="DO"/>
+<wire x1="43.18" y1="15.24" x2="38.1" y2="15.24" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
@@ -8339,9 +8340,6 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <instance part="U252" gate="G$1" x="205.74" y="12.7"/>
 <instance part="SUPPLY252" gate="G$1" x="190.5" y="25.4"/>
 <instance part="GND252" gate="1" x="190.5" y="5.08"/>
-<instance part="J2" gate="G$1" x="231.14" y="12.7" rot="MR0"/>
-<instance part="SUPPLY254" gate="G$1" x="220.98" y="25.4"/>
-<instance part="GND254" gate="1" x="220.98" y="5.08"/>
 </instances>
 <busses>
 </busses>
@@ -8515,12 +8513,6 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <wire x1="190.5" y1="25.4" x2="190.5" y2="12.7" width="0.1524" layer="91"/>
 <wire x1="190.5" y1="12.7" x2="193.04" y2="12.7" width="0.1524" layer="91"/>
 </segment>
-<segment>
-<pinref part="J2" gate="G$1" pin="2"/>
-<pinref part="SUPPLY254" gate="G$1" pin="VCC"/>
-<wire x1="223.52" y1="12.7" x2="220.98" y2="12.7" width="0.1524" layer="91"/>
-<wire x1="220.98" y1="12.7" x2="220.98" y2="25.4" width="0.1524" layer="91"/>
-</segment>
 </net>
 <net name="GND" class="0">
 <segment>
@@ -8690,12 +8682,6 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <pinref part="U252" gate="G$1" pin="GND"/>
 <wire x1="190.5" y1="7.62" x2="190.5" y2="10.16" width="0.1524" layer="91"/>
 <wire x1="190.5" y1="10.16" x2="193.04" y2="10.16" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="GND254" gate="1" pin="GND"/>
-<pinref part="J2" gate="G$1" pin="1"/>
-<wire x1="220.98" y1="7.62" x2="220.98" y2="10.16" width="0.1524" layer="91"/>
-<wire x1="220.98" y1="10.16" x2="223.52" y2="10.16" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$435" class="0">
@@ -9016,18 +9002,6 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <wire x1="223.52" y1="91.44" x2="218.44" y2="91.44" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$477" class="0">
-<segment>
-<pinref part="U247" gate="G$1" pin="DI"/>
-<wire x1="35.56" y1="15.24" x2="40.64" y2="15.24" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$478" class="0">
-<segment>
-<pinref part="U247" gate="G$1" pin="CI"/>
-<wire x1="35.56" y1="17.78" x2="40.64" y2="17.78" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$479" class="0">
 <segment>
 <pinref part="U247" gate="G$1" pin="CO"/>
@@ -9112,18 +9086,18 @@ We carry &lt;a href=”https://www.sparkfun.com/products/14204”&gt;200mm&lt;/a
 <label x="2.54" y="127" size="1.27" layer="95" font="vector" rot="R180" xref="yes"/>
 </segment>
 </net>
-<net name="N$491" class="0">
+<net name="N$477" class="0">
 <segment>
-<pinref part="U252" gate="G$1" pin="CO"/>
-<wire x1="218.44" y1="17.78" x2="223.52" y2="17.78" width="0.1524" layer="91"/>
-<pinref part="J2" gate="G$1" pin="4"/>
+<pinref part="U246" gate="G$1" pin="CO"/>
+<pinref part="U247" gate="G$1" pin="CI"/>
+<wire x1="35.56" y1="17.78" x2="40.64" y2="17.78" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$492" class="0">
+<net name="N$478" class="0">
 <segment>
-<pinref part="U252" gate="G$1" pin="DO"/>
-<wire x1="218.44" y1="15.24" x2="223.52" y2="15.24" width="0.1524" layer="91"/>
-<pinref part="J2" gate="G$1" pin="3"/>
+<pinref part="U246" gate="G$1" pin="DO"/>
+<pinref part="U247" gate="G$1" pin="DI"/>
+<wire x1="35.56" y1="15.24" x2="40.64" y2="15.24" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
