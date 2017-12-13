@@ -320,38 +320,6 @@
 <wire x1="34.29" y1="0" x2="1.143" y2="25.4" width="0.2032" layer="20" curve="-74.9247"/>
 <wire x1="34.29" y1="68.58" x2="67.437" y2="43.18" width="0.2032" layer="20" curve="-77"/>
 <wire x1="34.29" y1="68.58" x2="1.0795" y2="43.18" width="0.2032" layer="20" curve="74"/>
-<text x="34.29" y="48.641" size="1.016" layer="20" font="vector" ratio="15" align="center">Route out</text>
-<text x="34.29" y="55.88" size="1.016" layer="20" font="vector" ratio="15" align="center">Route out</text>
-<text x="34.29" y="62.865" size="1.016" layer="20" font="vector" ratio="15" align="center">Route out</text>
-<text x="55.88" y="34.29" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="62.865" y="34.29" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="48.26" y="34.29" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="20.32" y="34.29" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="12.7" y="34.29" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="5.715" y="34.29" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="34.29" y="20.32" size="1.016" layer="20" font="vector" ratio="15" rot="R180" align="center">Route out</text>
-<text x="34.29" y="13.335" size="1.016" layer="20" font="vector" ratio="15" rot="R180" align="center">Route out</text>
-<text x="34.29" y="6.35" size="1.016" layer="20" font="vector" ratio="15" rot="R180" align="center">Route out</text>
-<text x="34.29" y="41.5925" size="1.016" layer="20" font="vector" ratio="15" rot="R180" align="center">Route out</text>
-<text x="41.5925" y="34.29" size="1.016" layer="20" font="vector" ratio="15" rot="R270" align="center">Route out</text>
-<text x="26.9875" y="34.29" size="1.016" layer="20" font="vector" ratio="15" rot="R270" align="center">Route out</text>
-<text x="34.29" y="26.9875" size="1.016" layer="20" font="vector" ratio="15" align="center">Route out</text>
-<text x="113.03" y="41.529" size="1.016" layer="20" font="vector" ratio="15" align="center">Route out</text>
-<text x="113.03" y="48.895" size="1.016" layer="20" font="vector" ratio="15" align="center">Route out</text>
-<text x="113.03" y="55.88" size="1.016" layer="20" font="vector" ratio="15" align="center">Route out</text>
-<text x="113.03" y="62.865" size="1.016" layer="20" font="vector" ratio="15" align="center">Route out</text>
-<text x="127" y="34.925" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="133.985" y="34.925" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="141.605" y="34.925" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="98.425" y="34.925" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="91.44" y="34.925" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="84.455" y="34.925" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="113.03" y="20.32" size="1.016" layer="20" font="vector" ratio="15" rot="R180" align="center">Route out</text>
-<text x="113.03" y="12.7" size="1.016" layer="20" font="vector" ratio="15" rot="R180" align="center">Route out</text>
-<text x="113.03" y="5.715" size="1.016" layer="20" font="vector" ratio="15" rot="R180" align="center">Route out</text>
-<text x="120.3325" y="34.29" size="1.016" layer="20" font="vector" ratio="15" rot="R90" align="center">Route out</text>
-<text x="113.03" y="26.9875" size="1.016" layer="20" font="vector" ratio="15" rot="R180" align="center">Route out</text>
-<text x="105.7275" y="34.29" size="1.016" layer="20" font="vector" ratio="15" rot="R270" align="center">Route out</text>
 </plain>
 <libraries>
 <library name="1_BES_Optoelectronics">
