@@ -10,8 +10,12 @@ This example may be copied under the terms of the MIT license, see the LICENSE f
 #include <FastLED.h>
 
 //Wifi settings
+/*
 const char* ssid = "esp32devnet";
-const char* password = "password";
+const char* password = "password";*/
+
+const char* ssid = "NECTARKATZ";
+const char* password = "garrettiscuffed";
 
 // Neopixel settings
 const int numLeds = 252; // change for your setup
@@ -25,8 +29,8 @@ ArtnetWifi artnet;
 const int startUniverse = 1; // CHANGE FOR YOUR SETUP most software this is 1, some software send out artnet first universe as 0.
 
 // Check if we got all universes
-const int maxUniverses = numberOfChannels / 512 + ((numberOfChannels % 512) ? 1 : 0);
-bool universesReceived[maxUniverses];
+//const int maxUniverses = numberOfChannels / 512 + ((numberOfChannels % 512) ? 1 : 0);
+//bool universesReceived[maxUniverses];
 bool sendFrame = 1;
 int previousDataLength = 0;
 
@@ -74,13 +78,22 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
     FastLED.setBrightness(data[0]);
     FastLED.show();
   }
-
+Serial.println(length);
   // read universe and put into the right part of the display buffer
   for (int i = 0; i < length / 3; i++)
-  {
+  { //Serial.println(universe);
     int led = i + (universe - startUniverse) * (previousDataLength / 3);
+    //Serial.println(led);
     if (led < numLeds)
-      leds[led] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
+    switch(universe){
+      case 1:
+        leds[led] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
+        break;
+      case 2:
+        leds[led] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
+        break;
+    }
+
   }
   previousDataLength = length;     
   FastLED.show();
@@ -92,7 +105,6 @@ void setup()
   ConnectWifi();
   artnet.begin();
   FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN, BGR>(leds, numLeds);
-  initTest();
 
   // this will be called for each packet received
   artnet.setArtDmxCallback(onDmxFrame);
