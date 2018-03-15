@@ -12,10 +12,14 @@ This example may be copied under the terms of the MIT license, see the LICENSE f
 //Wifi settings
 /*
 const char* ssid = "esp32devnet";
-const char* password = "password";*/
+const char* password = "password";
 
 const char* ssid = "NECTARKATZ";
 const char* password = "garrettiscuffed";
+*/
+
+const char* ssid = "NETGEAR14";
+const char* password = "brightplanet943";
 
 // Neopixel settings
 const int numLeds = 252; // change for your setup
@@ -78,7 +82,7 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
     FastLED.setBrightness(data[0]);
     FastLED.show();
   }
-Serial.println(length);
+//Serial.println(length);
   // read universe and put into the right part of the display buffer
   for (int i = 0; i < length / 3; i++)
   { //Serial.println(universe);
