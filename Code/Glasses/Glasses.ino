@@ -11,15 +11,25 @@ This example may be copied under the terms of the MIT license, see the LICENSE f
 
 //Wifi settings
 
-const char* ssid = "esp32devnet";
-const char* password = "password";
+/*const char* ssid = "esp32devnet";
+const char* password = "password";*/
+
+const char* ssid = "sparkfun-guest";
+const char* password = "sparkfun6333";
 
 // LED Strip
-const int numLeds = 120; // change for your setup
+const int numLeds = 254; // change for your setup
 const int numberOfChannels = numLeds * 3; // Total number of channels you want to receive (1 led = 3 channels)
-#define DATA_PIN 12
-#define CLOCK_PIN 13
-CRGB leds[numLeds];
+
+#define LEFT_DATA_PIN 13
+#define LEFT_CLOCK_PIN 14
+
+#define RIGHT_DATA_PIN 2
+#define RIGHT_CLOCK_PIN 15
+
+
+CRGB leftLeds[numLeds];
+CRGB rightLeds[numLeds];
 
 // Artnet settings
 ArtnetWifi artnet;
@@ -75,9 +85,13 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
   for (int i = 0; i < length / 3; i++)
   {
     int led = i + (universe - startUniverse) * (previousDataLength / 3);
-    if (led < numLeds)
+    if (led < numLeds /2)
     {
-      leds[led] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
+      rightLeds[led] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
+    }
+    else
+    {  
+        leftLeds[led - 170] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
     }
   }
   previousDataLength = length;     
@@ -89,7 +103,9 @@ void setup()
   Serial.begin(115200);
   ConnectWifi();
   artnet.begin();
-  FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN, GRB>(leds, numLeds);
+  
+  FastLED.addLeds<APA102, LEFT_DATA_PIN, LEFT_CLOCK_PIN, BGR>(leftLeds, numLeds);
+  FastLED.addLeds<APA102, RIGHT_DATA_PIN, RIGHT_CLOCK_PIN, BGR>(rightLeds, numLeds);
   
   // onDmxFrame will execute every time a packet is received by the ESP32
   artnet.setArtDmxCallback(onDmxFrame);
