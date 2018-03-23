@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<XmlState name="ArtNetDemo">
+	<versionInfo name="Resolume Arena" majorVersion="6" minorVersion="0" microVersion="6" revision="60749"/>
+	<ScreenSetup name="ScreenSetup">
+		<Params name="ScreenSetupParams"/>
+		<sizing>
+			<inputs>
+				<InputSize name="0:1" width="1920" height="1080"/>
+				<InputSize name="0:2" width="64" height="64"/>
+				<InputSize name="3:1" width="64" height="64"/>
+				<InputSize name="3:2" width="64" height="64"/>
+				<InputSize name="3:3" width="64" height="64"/>
+			</inputs>
+		</sizing>
+		<screens>
+			<DmxScreen name="Lumiverse 1" uniqueId="1521046680171" LumiverseId="0">
+				<Params name="Params">
+					<Param name="Name" default="" value="Lumiverse 1"/>
+					<Param name="Enabled" default="1" value="1"/>
+					<Param name="Hidden" default="0" value="0"/>
+				</Params>
+				<Params name="Output">
+					<ParamRange name="Opacity" default="1" value="1">
+						<BehaviourDouble name="BehaviourDouble">
+							<PhaseSourceStatic name="PhaseSourceStatic"/>
+						</BehaviourDouble>
+					</ParamRange>
+					<ParamRange name="Brightness" default="0" value="0">
+						<ValueRange name="defaultRange" min="-1" max="1"/>
+						<BehaviourDouble name="BehaviourDouble">
+							<PhaseSourceStatic name="PhaseSourceStatic"/>
+						</BehaviourDouble>
+					</ParamRange>
+					<ParamRange name="Contrast" default="0" value="0">
+						<ValueRange name="defaultRange" min="-1" max="1"/>
+						<BehaviourDouble name="BehaviourDouble">
+							<PhaseSourceStatic name="PhaseSourceStatic"/>
+						</BehaviourDouble>
+					</ParamRange>
+					<ParamRange name="Red" default="0" value="0">
+						<ValueRange name="defaultRange" min="-1" max="1"/>
+						<BehaviourDouble name="BehaviourDouble">
+							<PhaseSourceStatic name="PhaseSourceStatic"/>
+						</BehaviourDouble>
+					</ParamRange>
+					<ParamRange name="Green" default="0" value="0">
+						<ValueRange name="defaultRange" min="-1" max="1"/>
+						<BehaviourDouble name="BehaviourDouble">
+							<PhaseSourceStatic name="PhaseSourceStatic"/>
+						</BehaviourDouble>
+					</ParamRange>
+					<ParamRange name="Blue" default="0" value="0">
+						<ValueRange name="defaultRange" min="-1" max="1"/>
+						<BehaviourDouble name="BehaviourDouble">
+							<PhaseSourceStatic name="PhaseSourceStatic"/>
+						</BehaviourDouble>
+					</ParamRange>
+				</Params>
+				<guides>
+					<ScreenGuide name="ScreenGuide" type="0">
+						<Params name="Params">
+							<ParamPixels name="Image"/>
+							<ParamRange name="Opacity" default="0.25" value="0.25">
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+						</Params>
+					</ScreenGuide>
+					<ScreenGuide name="ScreenGuide" type="1">
+						<Params name="Params">
+							<ParamPixels name="Image"/>
+							<ParamRange name="Opacity" default="0.25" value="0.25">
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+						</Params>
+					</ScreenGuide>
+				</guides>
+				<layers>
+					<DmxSlice uniqueId="1521046680432">
+						<Params name="Common">
+							<Param name="Name" default="Layer" value="1 - 180 LED Strip"/>
+							<Param name="Enabled" default="1" value="1"/>
+						</Params>
+						<Params name="Input">
+							<ParamChoice name="Input Source" default="0:1" value="0:1" storeChoices="0"/>
+							<Param name="Input Opacity" default="1" value="1"/>
+							<Param name="Input Bypass/Solo" default="1" value="1"/>
+							<ParamChoice storage="3" name="Fixture" default="" value="e87e612f88564a1b8a1c8664969ff286" storeChoices="0"/>
+							<ParamRange name="Start Channel" default="1" value="1">
+								<ValueRange name="defaultRange" min="1" max="512"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamChoice name="Filter Mode" default="0" value="0" storeChoices="0"/>
+						</Params>
+						<Params name="Output">
+							<Param name="Flip" default="0" value="0"/>
+							<ParamRange name="Brightness" default="0" value="0">
+								<ValueRange name="defaultRange" min="-1" max="1"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamRange name="Contrast" default="0" value="0">
+								<ValueRange name="defaultRange" min="-1" max="1"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamRange name="Red" default="0" value="0">
+								<ValueRange name="defaultRange" min="-1" max="1"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamRange name="Green" default="0" value="0">
+								<ValueRange name="defaultRange" min="-1" max="1"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamRange name="Blue" default="0" value="0">
+								<ValueRange name="defaultRange" min="-1" max="1"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+						</Params>
+						<InputRect orientation="0">
+							<v x="480" y="524"/>
+							<v x="1440" y="524"/>
+							<v x="1440" y="540"/>
+							<v x="480" y="540"/>
+						</InputRect>
+						<OutputRect orientation="0">
+							<v x="-0.5" y="-0.5"/>
+							<v x="0.5" y="-0.5"/>
+							<v x="0.5" y="0.5"/>
+							<v x="-0.5" y="0.5"/>
+						</OutputRect>
+						<FixtureInstance name="FixtureInstance">
+							<Fixture name="Fixture" uuid="3ed4fdab6b5c42e5b40205e8f195a5b4" fixtureName="">
+								<Params name="Params">
+									<ParamFixturePixels storage="0" name="Pixels" xmlVersion="2">
+										<ParamRange name="Width" default="1" value="60">
+											<ValueRange name="defaultRange" min="1" max="512"/>
+											<BehaviourDouble name="BehaviourDouble">
+												<PhaseSourceStatic name="PhaseSourceStatic"/>
+											</BehaviourDouble>
+										</ParamRange>
+										<ParamRange name="Height" default="1" value="1">
+											<ValueRange name="defaultRange" min="1" max="512"/>
+											<BehaviourDouble name="BehaviourDouble">
+												<PhaseSourceStatic name="PhaseSourceStatic"/>
+											</BehaviourDouble>
+										</ParamRange>
+										<ParamChoice name="Color Space" default="rgb" value="rgb" storeChoices="0"/>
+										<ParamChoice name="Distribution" default="170" value="170" storeChoices="0"/>
+										<ParamRange name="Gamma" default="2.5" value="2.5">
+											<ValueRange name="defaultRange" min="1" max="3"/>
+											<BehaviourDouble name="BehaviourDouble">
+												<PhaseSourceStatic name="PhaseSourceStatic"/>
+											</BehaviourDouble>
+										</ParamRange>
+									</ParamFixturePixels>
+								</Params>
+							</Fixture>
+						</FixtureInstance>
+					</DmxSlice>
+					<DmxSlice uniqueId="1521046680433">
+						<Params name="Common">
+							<Param name="Name" default="Layer" value="181 - 360 LED Strip"/>
+							<Param name="Enabled" default="1" value="1"/>
+						</Params>
+						<Params name="Input">
+							<ParamChoice name="Input Source" default="0:1" value="0:1" storeChoices="0"/>
+							<Param name="Input Opacity" default="1" value="1"/>
+							<Param name="Input Bypass/Solo" default="1" value="1"/>
+							<ParamChoice storage="3" name="Fixture" default="" value="e87e612f88564a1b8a1c8664969ff286" storeChoices="0"/>
+							<ParamRange name="Start Channel" default="1" value="181">
+								<ValueRange name="defaultRange" min="1" max="512"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamChoice name="Filter Mode" default="0" value="0" storeChoices="0"/>
+						</Params>
+						<Params name="Output">
+							<Param name="Flip" default="0" value="0"/>
+							<ParamRange name="Brightness" default="0" value="0">
+								<ValueRange name="defaultRange" min="-1" max="1"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamRange name="Contrast" default="0" value="0">
+								<ValueRange name="defaultRange" min="-1" max="1"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamRange name="Red" default="0" value="0">
+								<ValueRange name="defaultRange" min="-1" max="1"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamRange name="Green" default="0" value="0">
+								<ValueRange name="defaultRange" min="-1" max="1"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamRange name="Blue" default="0" value="0">
+								<ValueRange name="defaultRange" min="-1" max="1"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+						</Params>
+						<InputRect orientation="3.1415400505065917969">
+							<v x="1440.0008544921875" y="555.9747314453125"/>
+							<v x="480.000518798828125" y="556.0252685546875"/>
+							<v x="479.999664306640625" y="540.0252685546875"/>
+							<v x="1440.0001220703125" y="539.9747314453125"/>
+						</InputRect>
+						<OutputRect orientation="0">
+							<v x="-0.5" y="-0.5"/>
+							<v x="0.5" y="-0.5"/>
+							<v x="0.5" y="0.5"/>
+							<v x="-0.5" y="0.5"/>
+						</OutputRect>
+						<FixtureInstance name="FixtureInstance">
+							<Fixture name="Fixture" uuid="0772deab12bc46a6a6b647c2f6e264c9" fixtureName="">
+								<Params name="Params">
+									<ParamFixturePixels storage="0" name="Pixels" xmlVersion="2">
+										<ParamRange name="Width" default="1" value="60">
+											<ValueRange name="defaultRange" min="1" max="512"/>
+											<BehaviourDouble name="BehaviourDouble">
+												<PhaseSourceStatic name="PhaseSourceStatic"/>
+											</BehaviourDouble>
+										</ParamRange>
+										<ParamRange name="Height" default="1" value="1">
+											<ValueRange name="defaultRange" min="1" max="512"/>
+											<BehaviourDouble name="BehaviourDouble">
+												<PhaseSourceStatic name="PhaseSourceStatic"/>
+											</BehaviourDouble>
+										</ParamRange>
+										<ParamChoice name="Color Space" default="rgb" value="rgb" storeChoices="0"/>
+										<ParamChoice name="Distribution" default="170" value="170" storeChoices="0"/>
+										<ParamRange name="Gamma" default="2.5" value="2.5">
+											<ValueRange name="defaultRange" min="1" max="3"/>
+											<BehaviourDouble name="BehaviourDouble">
+												<PhaseSourceStatic name="PhaseSourceStatic"/>
+											</BehaviourDouble>
+										</ParamRange>
+									</ParamFixturePixels>
+								</Params>
+							</Fixture>
+						</FixtureInstance>
+					</DmxSlice>
+				</layers>
+				<OutputDevice>
+					<OutputDeviceDmx name="Lumiverse" deviceId="-1" idHash="5786948">
+						<Params name="Params">
+							<ParamRange name="Framerate" default="30" value="30">
+								<ValueRange name="defaultRange" min="1" max="40"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamRange name="Delay" default="40" value="40">
+								<ValueRange name="defaultRange" min="0" max="150"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamChoice name="Dmx Interface" default="0" value="0" storeChoices="0"/>
+						</Params>
+						<DmxOutputParams name="Params">
+							<Param name="TargetIP" default="TT_DISABLED" value="TT_BROADCAST"/>
+							<ParamRange name="Subnet" default="0" value="0">
+								<ValueRange name="defaultRange" min="0" max="15"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+							<ParamRange name="Universe" default="0" value="0">
+								<ValueRange name="defaultRange" min="0" max="15"/>
+								<BehaviourDouble name="BehaviourDouble">
+									<PhaseSourceStatic name="PhaseSourceStatic"/>
+								</BehaviourDouble>
+							</ParamRange>
+						</DmxOutputParams>
+					</OutputDeviceDmx>
+				</OutputDevice>
+			</DmxScreen>
+		</screens>
+		<SoftEdging>
+			<Params name="Soft Edge">
+				<ParamRange name="Gamma Red" default="2" value="2">
+					<ValueRange name="defaultRange" min="1" max="3"/>
+					<BehaviourDouble name="BehaviourDouble">
+						<PhaseSourceStatic name="PhaseSourceStatic"/>
+					</BehaviourDouble>
+				</ParamRange>
+				<ParamRange name="Gamma Green" default="2" value="2">
+					<ValueRange name="defaultRange" min="1" max="3"/>
+					<BehaviourDouble name="BehaviourDouble">
+						<PhaseSourceStatic name="PhaseSourceStatic"/>
+					</BehaviourDouble>
+				</ParamRange>
+				<ParamRange name="Gamma Blue" default="2" value="2">
+					<ValueRange name="defaultRange" min="1" max="3"/>
+					<BehaviourDouble name="BehaviourDouble">
+						<PhaseSourceStatic name="PhaseSourceStatic"/>
+					</BehaviourDouble>
+				</ParamRange>
+				<ParamRange name="Gamma" default="1" value="1">
+					<BehaviourDouble name="BehaviourDouble">
+						<PhaseSourceStatic name="PhaseSourceStatic"/>
+					</BehaviourDouble>
+				</ParamRange>
+				<ParamRange name="Luminance" default="0.5" value="0.5">
+					<BehaviourDouble name="BehaviourDouble">
+						<PhaseSourceStatic name="PhaseSourceStatic"/>
+					</BehaviourDouble>
+				</ParamRange>
+				<ParamRange name="Power" default="2" value="2">
+					<ValueRange name="defaultRange" min="0.10000000000000000555" max="7"/>
+					<BehaviourDouble name="BehaviourDouble">
+						<PhaseSourceStatic name="PhaseSourceStatic"/>
+					</BehaviourDouble>
+				</ParamRange>
+			</Params>
+		</SoftEdging>
+	</ScreenSetup>
+</XmlState>
+
