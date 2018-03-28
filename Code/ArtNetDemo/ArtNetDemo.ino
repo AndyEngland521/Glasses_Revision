@@ -18,7 +18,6 @@ const char* password = "password";
 const int numLeds = 120; // change for your setup
 const int numberOfChannels = numLeds * 3; // Total number of channels you want to receive (1 led = 3 channels)
 #define DATA_PIN 12
-#define CLOCK_PIN 13
 CRGB leds[numLeds];
 
 // Artnet settings
@@ -89,7 +88,7 @@ void setup()
   Serial.begin(115200);
   ConnectWifi();
   artnet.begin();
-  FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN, GRB>(leds, numLeds);
+  FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, numLeds);
   
   // onDmxFrame will execute every time a packet is received by the ESP32
   artnet.setArtDmxCallback(onDmxFrame);
