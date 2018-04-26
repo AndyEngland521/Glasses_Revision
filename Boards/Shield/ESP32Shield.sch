@@ -5682,7 +5682,7 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <part name="R31" library="SparkFun-Resistors" deviceset="10KOHM" device="-0603-1/10W-1%" value="10k"/>
 <part name="GND20" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 <part name="R36" library="SparkFun-Resistors" deviceset="20KOHM" device="-0603-1/10W-5%" value="20k"/>
-<part name="S3" library="SparkFun-Switches" deviceset="MOMENTARY-SWITCH-SPST" device="-SMD-4.5MM" value="MOMENTARY-SWITCH-SPST-SMD-4.5MM"/>
+<part name="S3" library="SparkFun-Switches" deviceset="MOMENTARY-SWITCH-SPST" device="-SMD-4.6X2.8MM" value="MOMENTARY-SWITCH-SPST-SMD-4.6X2.8MM"/>
 <part name="GND23" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 <part name="U$2" library="SparkFun-IC-Power" deviceset="DC-DC_CONVERTER" device=""/>
 <part name="F3" library="SparkFun-Fuses" deviceset="PPTC" device="_HALF-AMP" value="6V/6A"/>
