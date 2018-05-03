@@ -4,28 +4,28 @@ Adafruit's NeoPixel library: https://github.com/adafruit/Adafruit_NeoPixel
 This example may be copied under the terms of the MIT license, see the LICENSE file for details
 */
 
-#include <WiFi.h>
+#include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include <ArtnetWifi.h>
-#include <FastLED.h>
+#include "FastLED.h"
 
 //Wifi settings
 
-/*const char* ssid = "esp32devnet";
-const char* password = "password";*/
-
+const char* ssid = "esp32devnet";
+const char* password = "password";
+/*
 const char* ssid = "sparkfun-guest";
-const char* password = "sparkfun6333";
+const char* password = "sparkfun6333";*/
 
 // LED Strip
 const int numLeds = 254; // change for your setup
 const int numberOfChannels = numLeds * 3; // Total number of channels you want to receive (1 led = 3 channels)
 
 #define LEFT_DATA_PIN 13
-#define LEFT_CLOCK_PIN 14
+#define LEFT_CLOCK_PIN 12
 
-#define RIGHT_DATA_PIN 2
-#define RIGHT_CLOCK_PIN 15
+#define RIGHT_DATA_PIN 0
+#define RIGHT_CLOCK_PIN 4
 
 
 CRGB leftLeds[numLeds];
