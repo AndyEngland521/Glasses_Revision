@@ -4071,39 +4071,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </device>
 </devices>
 </deviceset>
-<deviceset name="20KOHM" prefix="R">
-<description>&lt;h3&gt;20kΩ resistor&lt;/h3&gt;
-&lt;p&gt;A resistor is a passive two-terminal electrical component that implements electrical resistance as a circuit element. Resistors act to reduce current flow, and, at the same time, act to lower voltage levels within circuits. - Wikipedia&lt;/p&gt;</description>
-<gates>
-<gate name="G$1" symbol="RESISTOR" x="0" y="0"/>
-</gates>
-<devices>
-<device name="-0603-1/10W-1%" package="0603">
-<connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="PROD_ID" value="RES-09383"/>
-<attribute name="VALUE" value="20k"/>
-</technology>
-</technologies>
-</device>
-<device name="-0603-1/10W-5%" package="0603">
-<connects>
-<connect gate="G$1" pin="1" pad="1"/>
-<connect gate="G$1" pin="2" pad="2"/>
-</connects>
-<technologies>
-<technology name="">
-<attribute name="PROD_ID" value="RES-09231"/>
-<attribute name="VALUE" value="20k"/>
-</technology>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="10KOHM" prefix="R">
 <description>&lt;h3&gt;10kΩ resistor&lt;/h3&gt;
 &lt;p&gt;A resistor is a passive two-terminal electrical component that implements electrical resistance as a circuit element. Resistors act to reduce current flow, and, at the same time, act to lower voltage levels within circuits. - Wikipedia&lt;/p&gt;</description>
@@ -4414,6 +4381,27 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <technology name="">
 <attribute name="PROD_ID" value="RES-07853"/>
 <attribute name="VALUE" value="22k"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="43KOHM" prefix="R">
+<description>&lt;h3&gt;43kΩ resistor&lt;/h3&gt;
+&lt;p&gt;A resistor is a passive two-terminal electrical component that implements electrical resistance as a circuit element. Resistors act to reduce current flow, and, at the same time, act to lower voltage levels within circuits. - Wikipedia&lt;/p&gt;</description>
+<gates>
+<gate name="G$1" symbol="RESISTOR" x="0" y="0"/>
+</gates>
+<devices>
+<device name="-0603-1/10W-1%" package="0603">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="PROD_ID" value="RES-07858"/>
+<attribute name="VALUE" value="43k"/>
 </technology>
 </technologies>
 </device>
@@ -5681,7 +5669,7 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <part name="GND17" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 <part name="R31" library="SparkFun-Resistors" deviceset="10KOHM" device="-0603-1/10W-1%" value="10k"/>
 <part name="GND20" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
-<part name="R36" library="SparkFun-Resistors" deviceset="20KOHM" device="-0603-1/10W-5%" value="20k"/>
+<part name="R36" library="SparkFun-Resistors" deviceset="100KOHM" device="-0603-1/10W-1%" value="100k"/>
 <part name="S3" library="SparkFun-Switches" deviceset="MOMENTARY-SWITCH-SPST" device="-SMD-4.6X2.8MM" value="MOMENTARY-SWITCH-SPST-SMD-4.6X2.8MM"/>
 <part name="GND23" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 <part name="U$2" library="SparkFun-IC-Power" deviceset="DC-DC_CONVERTER" device=""/>
@@ -5720,6 +5708,7 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <part name="GND8" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 <part name="SUPPLY11" library="SparkFun-PowerSymbols" deviceset="3.3V" device=""/>
 <part name="GND9" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
+<part name="R5" library="SparkFun-Resistors" deviceset="43KOHM" device="-0603-1/10W-1%" value="43k"/>
 </parts>
 <sheets>
 <sheet>
@@ -5735,8 +5724,8 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <text x="152.4" y="172.72" size="2.54" layer="97" font="vector">6A DC/DC Converter</text>
 <text x="88.9" y="66.04" size="2.54" layer="97" font="vector">Encoder &amp; Switches</text>
 <text x="17.78" y="63.5" size="2.54" layer="97" font="vector">Outputs</text>
-<text x="166.116" y="11.43" size="2.54" layer="97" font="vector">Andy England</text>
-<text x="236.22" y="7.62" size="2.54" layer="97" font="vector">v01</text>
+<text x="166.116" y="11.43" size="2.54" layer="94" font="vector">Andy England</text>
+<text x="236.22" y="7.62" size="2.54" layer="94" font="vector">v02</text>
 </plain>
 <instances>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
@@ -5746,11 +5735,11 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <instance part="GND15" gate="1" x="20.32" y="33.02"/>
 <instance part="RIGHTEYE" gate="G$1" x="10.16" y="15.24"/>
 <instance part="GND17" gate="1" x="20.32" y="5.08"/>
-<instance part="R31" gate="G$1" x="86.36" y="22.86" rot="R90"/>
-<instance part="GND20" gate="1" x="86.36" y="10.16"/>
-<instance part="R36" gate="G$1" x="86.36" y="50.8" rot="R90"/>
-<instance part="S3" gate="G$1" x="86.36" y="38.1" smashed="yes" rot="R90">
-<attribute name="NAME" x="84.836" y="38.1" size="1.778" layer="95" font="vector" rot="R90" align="bottom-center"/>
+<instance part="R31" gate="G$1" x="88.9" y="17.78" rot="R90"/>
+<instance part="GND20" gate="1" x="88.9" y="5.08"/>
+<instance part="R36" gate="G$1" x="88.9" y="45.72" rot="R90"/>
+<instance part="S3" gate="G$1" x="88.9" y="33.02" smashed="yes" rot="R90">
+<attribute name="NAME" x="87.376" y="33.02" size="1.778" layer="95" font="vector" rot="R90" align="bottom-center"/>
 </instance>
 <instance part="GND23" gate="1" x="147.32" y="152.4"/>
 <instance part="U$2" gate="G$1" x="190.5" y="109.22"/>
@@ -5772,12 +5761,12 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <instance part="SUPPLY2" gate="G$1" x="231.14" y="137.16"/>
 <instance part="SUPPLY3" gate="G$1" x="20.32" y="22.86"/>
 <instance part="SUPPLY4" gate="G$1" x="20.32" y="50.8"/>
-<instance part="SUPPLY5" gate="G$1" x="86.36" y="58.42"/>
-<instance part="S1" gate="G$1" x="109.22" y="45.72"/>
+<instance part="SUPPLY5" gate="G$1" x="88.9" y="53.34"/>
+<instance part="S1" gate="G$1" x="111.76" y="38.1"/>
 <instance part="J1" gate="G$1" x="40.64" y="43.18"/>
 <instance part="GND5" gate="1" x="50.8" y="35.56"/>
 <instance part="SUPPLY8" gate="G$1" x="50.8" y="50.8"/>
-<instance part="SUPPLY9" gate="G$1" x="96.52" y="58.42"/>
+<instance part="SUPPLY9" gate="G$1" x="99.06" y="58.42"/>
 <instance part="J2" gate="G$1" x="137.16" y="101.6" rot="R180"/>
 <instance part="J3" gate="G$1" x="137.16" y="93.98"/>
 <instance part="J4" gate="G$1" x="137.16" y="86.36" rot="R180"/>
@@ -5789,6 +5778,7 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <instance part="GND8" gate="1" x="40.64" y="132.08"/>
 <instance part="SUPPLY11" gate="G$1" x="33.02" y="139.7"/>
 <instance part="GND9" gate="1" x="71.12" y="132.08"/>
+<instance part="R5" gate="G$1" x="99.06" y="50.8" rot="R90"/>
 </instances>
 <busses>
 </busses>
@@ -5809,7 +5799,7 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <segment>
 <pinref part="GND20" gate="1" pin="GND"/>
 <pinref part="R31" gate="G$1" pin="1"/>
-<wire x1="86.36" y1="12.7" x2="86.36" y2="17.78" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="7.62" x2="88.9" y2="12.7" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="J12" gate="G$1" pin="2"/>
@@ -5891,17 +5881,17 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <net name="BTN" class="0">
 <segment>
 <pinref part="R31" gate="G$1" pin="2"/>
-<wire x1="86.36" y1="27.94" x2="86.36" y2="30.48" width="0.1524" layer="91"/>
-<wire x1="86.36" y1="30.48" x2="86.36" y2="33.02" width="0.1524" layer="91"/>
-<junction x="86.36" y="30.48"/>
-<wire x1="86.36" y1="30.48" x2="96.52" y2="30.48" width="0.1524" layer="91"/>
-<label x="121.92" y="30.48" size="1.27" layer="95" xref="yes"/>
+<wire x1="88.9" y1="22.86" x2="88.9" y2="25.4" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="25.4" x2="88.9" y2="27.94" width="0.1524" layer="91"/>
+<junction x="88.9" y="25.4"/>
+<wire x1="88.9" y1="25.4" x2="99.06" y2="25.4" width="0.1524" layer="91"/>
+<label x="124.46" y="25.4" size="1.27" layer="95" xref="yes"/>
 <pinref part="S3" gate="G$1" pin="1"/>
 <pinref part="S1" gate="G$1" pin="SW-"/>
-<wire x1="96.52" y1="30.48" x2="121.92" y2="30.48" width="0.1524" layer="91"/>
-<wire x1="99.06" y1="40.64" x2="96.52" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="96.52" y1="40.64" x2="96.52" y2="30.48" width="0.1524" layer="91"/>
-<junction x="96.52" y="30.48"/>
+<wire x1="99.06" y1="25.4" x2="124.46" y2="25.4" width="0.1524" layer="91"/>
+<wire x1="101.6" y1="33.02" x2="99.06" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="99.06" y1="33.02" x2="99.06" y2="25.4" width="0.1524" layer="91"/>
+<junction x="99.06" y="25.4"/>
 </segment>
 <segment>
 <pinref part="J6" gate="G$1" pin="2"/>
@@ -5912,7 +5902,7 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <net name="N$17" class="0">
 <segment>
 <pinref part="R36" gate="G$1" pin="1"/>
-<wire x1="86.36" y1="45.72" x2="86.36" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="40.64" x2="88.9" y2="38.1" width="0.1524" layer="91"/>
 <pinref part="S3" gate="G$1" pin="2"/>
 </segment>
 </net>
@@ -6020,14 +6010,8 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 </segment>
 <segment>
 <pinref part="R36" gate="G$1" pin="2"/>
-<wire x1="86.36" y1="55.88" x2="86.36" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="50.8" x2="88.9" y2="53.34" width="0.1524" layer="91"/>
 <pinref part="SUPPLY5" gate="G$1" pin="5V"/>
-</segment>
-<segment>
-<pinref part="S1" gate="G$1" pin="SW+"/>
-<pinref part="SUPPLY9" gate="G$1" pin="5V"/>
-<wire x1="99.06" y1="50.8" x2="96.52" y2="50.8" width="0.1524" layer="91"/>
-<wire x1="96.52" y1="50.8" x2="96.52" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="U$2" gate="G$1" pin="VOUT"/>
@@ -6055,6 +6039,11 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <pinref part="SUPPLY10" gate="G$1" pin="5V"/>
 <wire x1="27.94" y1="119.38" x2="30.48" y2="119.38" width="0.1524" layer="91"/>
 <wire x1="30.48" y1="119.38" x2="30.48" y2="121.92" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="R5" gate="G$1" pin="2"/>
+<pinref part="SUPPLY9" gate="G$1" pin="5V"/>
+<wire x1="99.06" y1="58.42" x2="99.06" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SDA" class="0">
@@ -6146,8 +6135,8 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <net name="ENC-A" class="0">
 <segment>
 <pinref part="S1" gate="G$1" pin="A"/>
-<wire x1="119.38" y1="40.64" x2="121.92" y2="40.64" width="0.1524" layer="91"/>
-<label x="121.92" y="40.64" size="1.27" layer="95" font="vector" xref="yes"/>
+<wire x1="121.92" y1="33.02" x2="124.46" y2="33.02" width="0.1524" layer="91"/>
+<label x="124.46" y="33.02" size="1.27" layer="95" font="vector" xref="yes"/>
 </segment>
 <segment>
 <pinref part="J5" gate="G$1" pin="5"/>
@@ -6158,8 +6147,8 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <net name="ENC-C" class="0">
 <segment>
 <pinref part="S1" gate="G$1" pin="C"/>
-<wire x1="119.38" y1="45.72" x2="121.92" y2="45.72" width="0.1524" layer="91"/>
-<label x="121.92" y="45.72" size="1.27" layer="95" font="vector" xref="yes"/>
+<wire x1="121.92" y1="38.1" x2="124.46" y2="38.1" width="0.1524" layer="91"/>
+<label x="124.46" y="38.1" size="1.27" layer="95" font="vector" xref="yes"/>
 </segment>
 <segment>
 <pinref part="J6" gate="G$1" pin="8"/>
@@ -6170,8 +6159,8 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <net name="ENC-B" class="0">
 <segment>
 <pinref part="S1" gate="G$1" pin="B"/>
-<wire x1="119.38" y1="50.8" x2="121.92" y2="50.8" width="0.1524" layer="91"/>
-<label x="121.92" y="50.8" size="1.27" layer="95" font="vector" xref="yes"/>
+<wire x1="121.92" y1="43.18" x2="124.46" y2="43.18" width="0.1524" layer="91"/>
+<label x="124.46" y="43.18" size="1.27" layer="95" font="vector" xref="yes"/>
 </segment>
 <segment>
 <pinref part="J5" gate="G$1" pin="4"/>
@@ -6184,6 +6173,14 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <pinref part="J3" gate="G$1" pin="1"/>
 <pinref part="Q1" gate="NMOS" pin="G"/>
 <wire x1="162.56" y1="93.98" x2="144.78" y2="93.98" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$6" class="0">
+<segment>
+<pinref part="S1" gate="G$1" pin="SW+"/>
+<wire x1="101.6" y1="43.18" x2="99.06" y2="43.18" width="0.1524" layer="91"/>
+<pinref part="R5" gate="G$1" pin="1"/>
+<wire x1="99.06" y1="45.72" x2="99.06" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
