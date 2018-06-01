@@ -8,16 +8,22 @@ This example may be copied under the terms of the MIT license, see the LICENSE f
 #include <WiFiUdp.h>
 #include <ArtnetWifi.h>
 #include "FastLED.h"
+#include <Wire.h>  // Include Wire if you're using I2C
+#include <SFE_MicroOLED.h>
+#include <Encoder.h>
+
+//Screen Settings
+#define PIN_RESET 15
+#define DC_JUMPER 1
+MicroOLED oled(PIN_RESET, DC_JUMPER); 
+
+Encoder knob(1, 3);
 
 //Wifi settings
-
 const char* ssid = "esp32devnet";
 const char* password = "password";
-/*
-const char* ssid = "sparkfun-guest";
-const char* password = "sparkfun6333";*/
 
-// LED Strip
+// LED Strips
 const int numLeds = 254; // change for your setup
 const int numberOfChannels = numLeds * 3; // Total number of channels you want to receive (1 led = 3 channels)
 
@@ -98,10 +104,65 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
   FastLED.show();
 }
 
+void printTitle(String title, int font)
+{
+  int middleX = oled.getLCDWidth() / 2;
+  int middleY = oled.getLCDHeight() / 2;
+  
+  oled.clear(PAGE);
+  oled.setFontType(font);
+  // Try to set the cursor in the middle of the screen
+  oled.setCursor(middleX - (oled.getFontWidth() * (title.length()/2)),
+                 middleY - (oled.getFontWidth() / 2));
+  // Print the title:
+  oled.print(title);
+  oled.display();
+  delay(3000);
+  oled.clear(PAGE);
+}
+
+void mainMenu ()
+{
+  oled.clear(PAGE);
+  oled.setFontType(0);
+  oled.setCursor(7, 0);
+  oled.print("ArtNet:");
+  oled.setCursor(7, 13);
+  oled.print("Patterns");
+  oled.setCursor(7, 26);
+  oled.print("Colors");
+  oled.setCursor(7, 39);
+  oled.print("Settings");
+  wifiStatus();
+  oled.setCursor(0, 0);
+  oled.write(253);
+  oled.display();
+  oled.clear(PAGE);
+}
+
+//this function will write wifi status to different things based on wht page it's on, maybe pass the page in as an argument?
+void wifiStatus()
+{
+  long rssi = WiFi.RSSI();
+  oled.setCursor(49, 0);
+  oled.print(rssi);
+}
+
 void setup()
 {
   Serial.begin(115200);
+  
+  delay(100);
+  oled.begin();    // Initialize the OLED
+  oled.clear(ALL); // Clear the display's internal memory
+  oled.display();  // Display what's in the buffer (splashscreen)
+  delay(1000);     // Delay 1000 ms
+  oled.clear(PAGE);
+  
+  printTitle("REZZ v0.1", 1);
+  
   ConnectWifi();
+  mainMenu();
   artnet.begin();
   
   FastLED.addLeds<APA102, LEFT_DATA_PIN, LEFT_CLOCK_PIN, BGR>(leftLeds, numLeds);
@@ -110,6 +171,8 @@ void setup()
   // onDmxFrame will execute every time a packet is received by the ESP32
   artnet.setArtDmxCallback(onDmxFrame);
 }
+
+long oldPosition  = -999;
 
 void loop()
 {
