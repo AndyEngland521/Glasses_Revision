@@ -10,19 +10,15 @@ This example may be copied under the terms of the MIT license, see the LICENSE f
 #include "FastLED.h"
 #include <Wire.h>  // Include Wire if you're using I2C
 #include <SFE_MicroOLED.h>
-#include "ESPRotary.h";
+#include <ESPRotary.h>
 
-/////////////////////////////////////////////////////////////////
-
-#define ROTARY_PIN1 15
+#define ROTARY_PIN1 16
 #define ROTARY_PIN2 5
 
-/////////////////////////////////////////////////////////////////
-
-ESPRotary r = ESPRotary(ROTARY_PIN1, ROTARY_PIN2);
+ESPRotary rotary = ESPRotary(ROTARY_PIN1, ROTARY_PIN2, 4);
 
 //Screen Settings
-#define PIN_RESET 16
+#define PIN_RESET 15
 #define DC_JUMPER 1
 MicroOLED oled(PIN_RESET, DC_JUMPER); 
 
@@ -32,11 +28,14 @@ int8_t modeSelect = 0;
 int8_t menuState = 0;
 int8_t menuLocation = 0;
 int8_t menuSlotTotal[5] = {4, 2, 1, 2, 2};
+uint16_t button = 0;
 uint16_t oldButton = 0;
+long encoder  = 0;
+long oldEncoder  = 0;
 
 //Wifi settings
-const char* ssid = "NETGEAR14";
-const char* password = "brightplanet943";
+const char* ssid = "esp32devnet";
+const char* password = "password";
 
 // LED Strips
 const int numLeds = 254; // change for your setup
@@ -162,23 +161,6 @@ void cylon ()
   }
 }
 
-void printTitle(String title, int font)
-{
-  int middleX = oled.getLCDWidth() / 2;
-  int middleY = oled.getLCDHeight() / 2;
-  
-  oled.clear(PAGE);
-  oled.setFontType(font);
-  // Try to set the cursor in the middle of the screen
-  oled.setCursor(middleX - (oled.getFontWidth() * (title.length()/2)),
-                 middleY - (oled.getFontWidth() / 2));
-  // Print the title:
-  oled.print(title);
-  oled.display();
-  delay(3000);
-  oled.clear(PAGE);
-}
-
 //this function will write wifi status to different things based on wht page it's on, maybe pass the page in as an argument?
 int wifiStatus()
 {
@@ -192,21 +174,10 @@ int wifiStatus()
   }
 }
 
-void checkButton ()
+void checkRotary (ESPRotary& rotary)
 {
-  uint16_t button = analogRead(A0);
- 
-  if (button != oldButton)
-  {
-    if (button > 525 && oldButton < 100)
-    {
-      menuLocation++;
-    }
-    else if (button > 400 && oldButton < 100)
-    {
-      changeMenuState();
-    }
-    if (menuLocation >= menuSlotTotal[menuState])
+  menuLocation = rotary.getPosition();
+  if (menuLocation >= menuSlotTotal[menuState])
     {
       menuLocation = 0;
     }
@@ -214,9 +185,7 @@ void checkButton ()
     {
       menuLocation = menuSlotTotal[menuState] - 1;
     }
-    drawMenu();
-    oldButton = button;
-  }
+  drawMenu();
   delay(10);
 }
 
@@ -363,7 +332,7 @@ void artnetMenu ()
   {
     oled.print("Connect?");
   }
-  oled.setCursor(7, 31);
+  oled.setCursor(7, 41);
   oled.print("Use?");
   drawIndicator(10);
 }
@@ -419,12 +388,22 @@ void off()
     rightLeds[led] = CRGB::Black;
   }
   FastLED.show();
+  delay(5);
+}
+
+void ISR ()
+{
+  rotary.loop();
 }
 
 void setup()
 {
   //Serial.begin(115200);
-  
+  FastLED.addLeds<APA102, LEFT_DATA_PIN, LEFT_CLOCK_PIN, BGR>(leftLeds, numLeds);
+  FastLED.addLeds<APA102, RIGHT_DATA_PIN, RIGHT_CLOCK_PIN, BGR>(rightLeds, numLeds);
+  off();
+  rotary.setChangedHandler(checkRotary);
+  attachInterrupt(digitalPinToInterrupt(ROTARY_PIN2), ISR, CHANGE);
   delay(100);
   oled.begin();    // Initialize the OLED
   oled.clear(ALL); // Clear the display's internal memory
@@ -432,10 +411,10 @@ void setup()
   delay(500);     // Delay 1000 ms
   oled.clear(PAGE);
   splashScreen();
+  ConnectWifi();
   drawMenu();
   
-  FastLED.addLeds<APA102, LEFT_DATA_PIN, LEFT_CLOCK_PIN, BGR>(leftLeds, numLeds);
-  FastLED.addLeds<APA102, RIGHT_DATA_PIN, RIGHT_CLOCK_PIN, BGR>(rightLeds, numLeds);
+
   artnet.begin();
   // onDmxFrame will execute every time a packet is received by the ESP32
   artnet.setArtDmxCallback(onDmxFrame);
@@ -453,6 +432,7 @@ void loop()
       break;
     case 2:
       artnet.read();
+      break;
   }
-  checkButton();
+  checkRotary(rotary);
 }
