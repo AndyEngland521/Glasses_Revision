@@ -24,14 +24,16 @@ MicroOLED oled(PIN_RESET, DC_JUMPER);
 
 //menuState selects which menu we are in (main, artnet, etc) while location tells where in each menu we are
 //menuSlotTotal tells us how menu available menulocation slots we have in each menu
-int8_t modeSelect = 0;
-int8_t menuState = 0;
-int8_t menuLocation = 0;
-int8_t menuSlotTotal[5] = {4, 2, 1, 2, 2};
+//modeSelect is which color mode is being displayed
+uint8_t modeSelect = 0;
+uint8_t menuState = 0;
+uint8_t menuLocation = 0;
+uint8_t menuSlotTotal[5] = {4, 2, 1, 2, 2};
 uint16_t button = 0;
 uint16_t oldButton = 0;
 long encoder  = 0;
 long oldEncoder  = 0;
+#define buttonPin A0
 
 //Wifi settings
 const char* ssid = "esp32devnet";
@@ -46,7 +48,6 @@ const int numberOfChannels = numLeds * 3; // Total number of channels you want t
 
 #define RIGHT_DATA_PIN 0
 #define RIGHT_CLOCK_PIN 4
-
 
 CRGB leftLeds[numLeds];
 CRGB rightLeds[numLeds];
@@ -129,13 +130,14 @@ void fadeall()
 
 void cylon ()
 {
-  static uint8_t hue = 0;
+  static uint8_t hue1 = 0;
+  static uint8_t hue2 = 0;
   Serial.print("x");
   // First slide the led in one direction
   for(int i = 0; i < numLeds / 2; i++) {
     // Set the i'th led to red 
-    leftLeds[i] = CHSV(hue++, 255, 255);
-    rightLeds[i] = CHSV(hue++, 255, 255);
+    leftLeds[i] = CHSV(hue1++, 255, 255);
+    rightLeds[i] = CHSV(hue2--, 255, 255);
     // Show the leds
     FastLED.show(); 
     // now that we've shown the leds, reset the i'th led to black
@@ -149,8 +151,8 @@ void cylon ()
   // Now go in the other direction.  
   for(int i = (numLeds / 2)-1; i >= 0; i--) {
     // Set the i'th led to red 
-    leftLeds[i] = CHSV(hue++, 255, 255);
-    rightLeds[i] = CHSV(hue++, 255, 255);
+    leftLeds[i] = CHSV(hue1++, 255, 255);
+    rightLeds[i] = CHSV(hue2--, 255, 255);
     // Show the leds
     FastLED.show();
     // now that we've shown the leds, reset the i'th led to black
@@ -176,20 +178,32 @@ int wifiStatus()
 
 void checkRotary (ESPRotary& rotary)
 {
-  menuLocation = rotary.getPosition();
-  if (menuLocation >= menuSlotTotal[menuState])
-    {
-      menuLocation = 0;
-    }
-    if (menuLocation < 0)
-    {
-      menuLocation = menuSlotTotal[menuState] - 1;
-    }
+  menuLocation = rotary.getPosition() % menuSlotTotal[menuState];
+  if (menuLocation < 0) {
+    menuLocation = 0;
+  }
   drawMenu();
-  delay(10);
 }
 
-void changeMenuState ()
+void checkButton ()
+{
+  button = analogRead(buttonPin);
+  if (button != oldButton)
+  {
+    if (button > 525 && oldButton < 100)
+    {
+      selectButton();
+    }
+    else if (button > 400 && oldButton < 100)
+    {
+      backButton();
+    }
+    oldButton = button;
+    drawMenu();
+  }
+}
+
+void selectButton ()
 {
   switch (menuState) 
   {
@@ -208,7 +222,6 @@ void changeMenuState ()
         case 3:
           menuState = 4;
           break;
-      
       }
       break;
     case 1:
@@ -233,7 +246,6 @@ void changeMenuState ()
       switch (menuLocation)
       {
         case 0:
-          menuState = 0;
           break;
       }
     break;
@@ -241,10 +253,30 @@ void changeMenuState ()
       switch (menuLocation)
       {
         case 0:
-          menuState = 0;
           break;
       }
     break;    
+  }
+}
+
+void backButton ()
+{
+  switch (menuState) 
+  {
+    case 0:
+      break;
+    case 1:
+      menuState = 0;
+      break;
+    case 2:
+      menuState = 0;
+      break;
+    case 3:
+      menuState = 0;
+      break;
+    case 4:
+      menuState = 0;
+      break;    
   }
 }
 
@@ -271,7 +303,6 @@ void drawMenu()
       break; 
   }
   oled.display();
-  oled.clear(PAGE);
 }
 
 void header ()
@@ -403,7 +434,7 @@ void setup()
   FastLED.addLeds<APA102, RIGHT_DATA_PIN, RIGHT_CLOCK_PIN, BGR>(rightLeds, numLeds);
   off();
   rotary.setChangedHandler(checkRotary);
-  attachInterrupt(digitalPinToInterrupt(ROTARY_PIN2), ISR, CHANGE);
+  //attachInterrupt(digitalPinToInterrupt(ROTARY_PIN2), ISR, CHANGE);
   delay(100);
   oled.begin();    // Initialize the OLED
   oled.clear(ALL); // Clear the display's internal memory
@@ -411,17 +442,18 @@ void setup()
   delay(500);     // Delay 1000 ms
   oled.clear(PAGE);
   splashScreen();
-  ConnectWifi();
+  //ConnectWifi();
   drawMenu();
   
-
   artnet.begin();
   // onDmxFrame will execute every time a packet is received by the ESP32
   artnet.setArtDmxCallback(onDmxFrame);
 }
 
 void loop()
-{
+{  
+  rotary.loop();
+  checkButton();
   switch (modeSelect)
   {
     case 0:
@@ -434,5 +466,4 @@ void loop()
       artnet.read();
       break;
   }
-  checkRotary(rotary);
 }
