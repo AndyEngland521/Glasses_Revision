@@ -31,6 +31,7 @@ uint8_t menuLocation = 0;
 uint8_t menuSlotTotal[5] = {4, 2, 1, 2, 2};
 uint8_t asciiChar = 0;
 uint8_t charPosition = 0;
+bool editChar = false;
 uint16_t button = 0;
 uint16_t oldButton = 0;
 long encoder  = 0;
@@ -194,7 +195,14 @@ void checkRotary (ESPRotary& rotary)
   }
   else
   {
-    charPosition = rotary.getPosition();
+    if (editChar == false)
+    {
+      charPosition = rotary.getPosition();
+    }
+    else
+    {
+      editString[charPosition] = rotary.getPosition();
+    }
   }
   drawMenu();
 }
@@ -278,7 +286,8 @@ void selectButton ()
       }
       break;
     case 5:
-      editString[charPosition]++;
+      editChar = !editChar;
+      rotary.resetPosition();
       break;
   }
 }
@@ -291,21 +300,31 @@ void backButton ()
       break;
     case 1:
       menuState = 0;
+      menuLocation = 0;
       break;
     case 2:
       menuState = 0;
+      menuLocation = 0;
       break;
     case 3:
       menuState = 0;
+      menuLocation = 0;
       break;
     case 4:
       menuState = 0;
+      menuLocation = 0;
       break;
     case 5:
-      menuState = 4;
+      if (editChar == false)
+      {
+        menuState = 4;
+      }
+      else {
+        editChar = false;
+      }
       break;    
   }
-  menuLocation = 0;
+
 }
 
 void drawMenu() 
@@ -508,7 +527,6 @@ void setup()
   splashScreen();
   //ConnectWifi();
   drawMenu();
-  
   artnet.begin();
   // onDmxFrame will execute every time a packet is received by the ESP32
   artnet.setArtDmxCallback(onDmxFrame);
