@@ -29,6 +29,8 @@ uint8_t modeSelect = 0;
 uint8_t menuState = 0;
 uint8_t menuLocation = 0;
 uint8_t menuSlotTotal[5] = {4, 2, 1, 2, 2};
+uint8_t asciiChar = 0;
+uint8_t charPosition = 0;
 uint16_t button = 0;
 uint16_t oldButton = 0;
 long encoder  = 0;
@@ -36,8 +38,9 @@ long oldEncoder  = 0;
 #define buttonPin A0
 
 //Wifi settings
-const char* ssid = "esp32devnet";
-const char* password = "password";
+char* ssid = "WiFiName";
+char* password = "password";
+char* editString;
 
 // LED Strips
 const int numLeds = 254; // change for your setup
@@ -96,6 +99,8 @@ boolean ConnectWifi(void)
 
 void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)
 {
+  rotary.loop();
+  checkButton();
   sendFrame = 1;
   // set brightness of the whole strip 
   if (universe == 15)
@@ -132,9 +137,10 @@ void cylon ()
 {
   static uint8_t hue1 = 0;
   static uint8_t hue2 = 0;
-  Serial.print("x");
   // First slide the led in one direction
   for(int i = 0; i < numLeds / 2; i++) {
+    rotary.loop();
+    checkButton();
     // Set the i'th led to red 
     leftLeds[i] = CHSV(hue1++, 255, 255);
     rightLeds[i] = CHSV(hue2--, 255, 255);
@@ -146,10 +152,11 @@ void cylon ()
     // Wait a little bit before we loop around and do it again
     delay(10);
   }
-  Serial.print("x");
 
   // Now go in the other direction.  
   for(int i = (numLeds / 2)-1; i >= 0; i--) {
+    rotary.loop();
+    checkButton();
     // Set the i'th led to red 
     leftLeds[i] = CHSV(hue1++, 255, 255);
     rightLeds[i] = CHSV(hue2--, 255, 255);
@@ -178,17 +185,25 @@ int wifiStatus()
 
 void checkRotary (ESPRotary& rotary)
 {
-  menuLocation = rotary.getPosition() % menuSlotTotal[menuState];
-  if (menuLocation < 0) {
-    menuLocation = 0;
+  if (menuState != 5)
+  {
+    menuLocation = rotary.getPosition() % menuSlotTotal[menuState];
+    if (menuLocation < 0) {
+      menuLocation = 0;
+    }
+  }
+  else
+  {
+    charPosition = rotary.getPosition();
   }
   drawMenu();
 }
 
+
 void checkButton ()
 {
   button = analogRead(buttonPin);
-  if (button != oldButton)
+  if (button - oldButton > 50)
   {
     if (button > 525 && oldButton < 100)
     {
@@ -198,9 +213,9 @@ void checkButton ()
     {
       backButton();
     }
-    oldButton = button;
     drawMenu();
   }
+  oldButton = button;
 }
 
 void selectButton ()
@@ -212,15 +227,19 @@ void selectButton ()
       {
         case 0:
           menuState = 1;
+          menuLocation = 0;
           break;
         case 1:
           menuState = 2;
+          menuLocation = 0;
           break;
         case 2:
           menuState = 3;
+          menuLocation = 0;
           break;
         case 3:
           menuState = 4;
+          menuLocation = 0;
           break;
       }
       break;
@@ -253,9 +272,14 @@ void selectButton ()
       switch (menuLocation)
       {
         case 0:
+        case 1:
+          menuState = 5;
           break;
       }
-    break;    
+      break;
+    case 5:
+      editString[charPosition]++;
+      break;
   }
 }
 
@@ -276,8 +300,12 @@ void backButton ()
       break;
     case 4:
       menuState = 0;
+      break;
+    case 5:
+      menuState = 4;
       break;    
   }
+  menuLocation = 0;
 }
 
 void drawMenu() 
@@ -300,9 +328,43 @@ void drawMenu()
       break;
     case 4:
       settingsMenu();
-      break; 
+      break;
+    case 5:
+      changeStringMenu();
+      break;
   }
   oled.display();
+}
+
+void changeStringMenu ()
+{
+  oled.setFontType(0);
+  oled.setCursor(0, 11);
+  switch (menuLocation)
+  {
+    case 0:
+      editString = ssid;
+      oled.print("SSID");
+      break;
+    case 1:
+      editString = password;
+      oled.print("Password");
+      break;
+  }
+  oled.setCursor(0, 21);
+  for (int i = 0; i < strlen(editString); i++) {
+    if (i == charPosition)
+    {
+      oled.setColor(BLACK);
+      oled.print(editString[i]); 
+      oled.setColor(WHITE);
+    }
+    else
+    {
+      oled.setColor(WHITE);
+      oled.print(editString[i]);
+    }
+  }
 }
 
 void header ()
@@ -413,6 +475,8 @@ void splashScreen ()
 
 void off()
 {
+  rotary.loop();
+  checkButton();
   for (int led = 0; led < 126; led++)
   {
     leftLeds[led] = CRGB::Black;
@@ -452,8 +516,6 @@ void setup()
 
 void loop()
 {  
-  rotary.loop();
-  checkButton();
   switch (modeSelect)
   {
     case 0:
