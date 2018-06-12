@@ -39,8 +39,8 @@ long oldEncoder  = 0;
 #define buttonPin A0
 
 //Wifi settings
-char* ssid = "WiFiName";
-char* password = "password";
+char ssid[] = "NECTARKATZ";
+char password[] = "garrettiscuffed";
 char* editString;
 
 // LED Strips
@@ -77,23 +77,14 @@ boolean ConnectWifi(void)
   //Serial.print("Connecting");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    //Serial.print(".");
+    wifiLoading();
     if (i > 20){
       state = false;
       break;
     }
     i++;
   }
-  if (state){
-    //Serial.println("");
-    //Serial.print("Connected to ");
-    //Serial.println(ssid);
-    //Serial.print("IP address: ");
-    //Serial.println(WiFi.localIP());
-  } else {
-    //Serial.println("");
-    //Serial.println("Connection failed.");
-  }
+  drawMenu();
   
   return state;
 }
@@ -197,11 +188,11 @@ void checkRotary (ESPRotary& rotary)
   {
     if (editChar == false)
     {
-      charPosition = rotary.getPosition();
+      charPosition = rotary.getPosition() % (strlen(editString) + 1);
     }
     else
     {
-      editString[charPosition] = rotary.getPosition();
+      editString[charPosition] = abs(rotary.getPosition() % 96) + 32;
     }
   }
   drawMenu();
@@ -259,6 +250,7 @@ void selectButton ()
           break;
         case 1:
           modeSelect = 2;
+          break;
       }
     break;
     case 2:
@@ -287,7 +279,14 @@ void selectButton ()
       break;
     case 5:
       editChar = !editChar;
-      rotary.resetPosition();
+      if (editChar == true)
+      {
+        rotary.setPosition(editString[charPosition]);
+      }
+      else
+      {
+        rotary.resetPosition();
+      }
       break;
   }
 }
@@ -371,19 +370,28 @@ void changeStringMenu ()
       break;
   }
   oled.setCursor(0, 21);
-  for (int i = 0; i < strlen(editString); i++) {
+  for (int i = 0; i < strlen(editString) + 1; i++) {
     if (i == charPosition)
     {
       oled.setColor(BLACK);
-      oled.print(editString[i]); 
+      oled.write((int)editString[i]); 
       oled.setColor(WHITE);
     }
     else
     {
       oled.setColor(WHITE);
-      oled.print(editString[i]);
+      oled.write((int)editString[i]);
     }
   }
+}
+
+void wifiLoading()
+{
+  oled.clear(PAGE);
+  oled.setFontType(1);
+  oled.setCursor(0, 0);
+  oled.print("CONNECTING");
+  oled.display();
 }
 
 void header ()
@@ -525,7 +533,7 @@ void setup()
   delay(500);     // Delay 1000 ms
   oled.clear(PAGE);
   splashScreen();
-  //ConnectWifi();
+  ConnectWifi();
   drawMenu();
   artnet.begin();
   // onDmxFrame will execute every time a packet is received by the ESP32
