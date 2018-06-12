@@ -3334,6 +3334,7 @@ These rules have been curated by SparkFuns DFM commitee. After doing much resear
 <contactref element="J6" pad="10"/>
 <via x="26.67" y="21.59" extent="1-16" drill="0.381"/>
 <via x="26.67" y="17.78" extent="1-16" drill="0.381"/>
+<contactref element="S1" pad="C"/>
 </signal>
 <signal name="BTN">
 <contactref element="R31" pad="2"/>
@@ -3521,50 +3522,23 @@ These rules have been curated by SparkFuns DFM commitee. After doing much resear
 <wire x1="17.78" y1="0" x2="15.24" y2="0" width="0.2032" layer="1"/>
 <contactref element="J6" pad="6"/>
 <wire x1="13.97" y1="-1.27" x2="15.24" y2="0" width="0.2032" layer="1"/>
+<contactref element="RIGHTEYE" pad="3"/>
+<wire x1="8.89" y1="1.27" x2="13.97" y2="-1.27" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="DR">
 <contactref element="RIGHTEYE" pad="4"/>
 <contactref element="J6" pad="5"/>
 <wire x1="11.43" y1="-1.27" x2="11.43" y2="1.27" width="0.2032" layer="1"/>
 </signal>
-<signal name="CR">
-<contactref element="RIGHTEYE" pad="3"/>
-<contactref element="J6" pad="4"/>
-<wire x1="8.89" y1="1.27" x2="8.89" y2="-1.27" width="0.2032" layer="1"/>
-</signal>
 <signal name="ENC-A">
 <contactref element="S1" pad="A"/>
-<contactref element="J5" pad="5"/>
-<wire x1="52.07" y1="21.463" x2="48.387" y2="17.78" width="0.2032" layer="1"/>
-<wire x1="48.387" y1="17.78" x2="40.64" y2="17.78" width="0.2032" layer="1"/>
-<via x="40.64" y="17.78" extent="1-16" drill="0.381"/>
-<wire x1="40.64" y1="17.78" x2="39.751" y2="16.891" width="0.2032" layer="16"/>
-<wire x1="39.751" y1="16.891" x2="13.97" y2="16.891" width="0.2032" layer="16"/>
-<wire x1="13.97" y1="16.891" x2="11.43" y2="19.431" width="0.2032" layer="16"/>
-<wire x1="11.43" y1="19.431" x2="11.43" y2="21.59" width="0.2032" layer="16"/>
-</signal>
-<signal name="ENC-C">
-<contactref element="S1" pad="C"/>
-<wire x1="19.939" y1="-0.381" x2="20.574" y2="-0.381" width="0.2032" layer="1"/>
-<wire x1="20.574" y1="-0.381" x2="20.955" y2="0" width="0.2032" layer="1"/>
-<wire x1="20.955" y1="0" x2="22.86" y2="0" width="0.2032" layer="1"/>
-<wire x1="22.86" y1="0" x2="25.4" y2="2.54" width="0.2032" layer="1"/>
-<wire x1="25.4" y1="2.54" x2="44.45" y2="2.54" width="0.2032" layer="1"/>
-<wire x1="44.45" y1="2.54" x2="45.72" y2="3.81" width="0.2032" layer="1"/>
-<via x="45.72" y="3.81" extent="1-16" drill="0.381"/>
-<wire x1="45.72" y1="3.81" x2="45.72" y2="15.24" width="0.2032" layer="16"/>
-<wire x1="45.72" y1="15.24" x2="49.53" y2="19.05" width="0.2032" layer="16"/>
-<wire x1="49.53" y1="19.05" x2="49.53" y2="21.463" width="0.2032" layer="16"/>
 <contactref element="J6" pad="8"/>
-<wire x1="19.05" y1="-1.27" x2="19.939" y2="-0.381" width="0.2032" layer="1"/>
+<wire x1="19.05" y1="-1.27" x2="52.07" y2="21.463" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="ENC-B">
 <contactref element="S1" pad="B"/>
-<contactref element="J5" pad="4"/>
-<wire x1="46.99" y1="21.463" x2="42.037" y2="16.51" width="0.2032" layer="16"/>
-<wire x1="42.037" y1="16.51" x2="12.7" y2="16.51" width="0.2032" layer="16"/>
-<wire x1="12.7" y1="16.51" x2="8.89" y2="20.32" width="0.2032" layer="16"/>
-<wire x1="8.89" y1="20.32" x2="8.89" y2="21.59" width="0.2032" layer="16"/>
+<contactref element="J6" pad="4"/>
+<wire x1="8.89" y1="-1.27" x2="46.99" y2="21.463" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$1">
 <contactref element="J3" pad="1"/>
@@ -3572,7 +3546,7 @@ These rules have been curated by SparkFuns DFM commitee. After doing much resear
 <wire x1="10.16" y1="10.16" x2="11.43" y2="11.43" width="0.2032" layer="1"/>
 <wire x1="11.43" y1="11.43" x2="11.938" y2="11.43" width="0.2032" layer="1"/>
 <wire x1="11.938" y1="11.43" x2="12.335" y2="11.827" width="0.2032" layer="1"/>
-<wire x1="12.335" y1="11.827" x2="12.335" y2="12.38" width="0.2032" layer="1"/>
+<wire x1="12.335" y1="11.827" x2="12.335" y2="12.38" width="0" layer="19" extent="1-16"/>
 </signal>
 <signal name="N$6">
 <contactref element="S1" pad="SW+"/>
@@ -3584,6 +3558,9 @@ These rules have been curated by SparkFuns DFM commitee. After doing much resear
 <via x="44.45" y="8.89" extent="1-16" drill="0.381"/>
 <wire x1="44.45" y1="8.89" x2="45.085" y2="8.89" width="0.2032" layer="1"/>
 <wire x1="45.085" y1="8.89" x2="46.99" y2="6.985" width="0.2032" layer="1"/>
+</signal>
+<signal name="BTNINT">
+<contactref element="J6" pad="1"/>
 </signal>
 </signals>
 </board>
