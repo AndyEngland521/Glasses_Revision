@@ -44,7 +44,7 @@ char password[] = "garrettiscuffed";
 char* editString;
 
 // LED Strips
-const int numLeds = 254; // change for your setup
+const int numLeds = 252; // change for your setup
 const int numberOfChannels = numLeds * 3; // Total number of channels you want to receive (1 led = 3 channels)
 
 #define LEFT_DATA_PIN 13
@@ -56,12 +56,27 @@ const int numberOfChannels = numLeds * 3; // Total number of channels you want t
 CRGB leftLeds[numLeds];
 CRGB rightLeds[numLeds];
 
+uint8_t leftEyeMap[numLeds / 2];
+uint8_t rightEyeMap[numLeds / 2];
+const uint8_t circleNum[5] = {4, 16, 25, 36, 45};
+
 // Artnet settings
 ArtnetWifi artnet;
 const int startUniverse = 0;
 
 bool sendFrame = 1;
 int previousDataLength = 0;
+
+void mapEye ()
+{
+  for (int i = 0; i < 5; i++)
+  {
+    for(int ledPosition - )
+    {
+      
+    }
+  }
+}
 
 // connect to wifi – returns true if successful or false if not
 boolean ConnectWifi(void)
@@ -91,8 +106,6 @@ boolean ConnectWifi(void)
 
 void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)
 {
-  rotary.loop();
-  checkButton();
   sendFrame = 1;
   // set brightness of the whole strip 
   if (universe == 15)
