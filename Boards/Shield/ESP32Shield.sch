@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.7.0">
+<eagle version="9.0.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
+<setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
@@ -4407,6 +4408,27 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </device>
 </devices>
 </deviceset>
+<deviceset name="4.7KOHM" prefix="R">
+<description>&lt;h3&gt;4.7kΩ resistor&lt;/h3&gt;
+&lt;p&gt;A resistor is a passive two-terminal electrical component that implements electrical resistance as a circuit element. Resistors act to reduce current flow, and, at the same time, act to lower voltage levels within circuits. - Wikipedia&lt;/p&gt;</description>
+<gates>
+<gate name="G$1" symbol="RESISTOR" x="0" y="0"/>
+</gates>
+<devices>
+<device name="-0603-1/10W-1%" package="0603">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="PROD_ID" value="RES-07857"/>
+<attribute name="VALUE" value="4.7k"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
 </devicesets>
 </library>
 <library name="SparkFun-Capacitors">
@@ -5651,6 +5673,110 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 </deviceset>
 </devicesets>
 </library>
+<library name="SparkFun-IC-Amplifiers">
+<description>&lt;h3&gt;SparkFun Amplifiers&lt;/h3&gt;
+This library contains analog amplifiers, mostly operational amplifiers but also has some headphone and audio amps with more specific applications.
+&lt;p&gt;Contents:
+&lt;ul&gt;&lt;li&gt;Op-amps&lt;/li&gt;
+&lt;li&gt;Headphone amps&lt;/li&gt;
+&lt;li&gt;Class D amps&lt;/li&gt;
+&lt;/ul&gt;&lt;/p&gt;
+&lt;br&gt;
+We've spent an enormous amount of time creating and checking these footprints and parts, but it is &lt;b&gt; the end user's responsibility&lt;/b&gt; to ensure correctness and suitablity for a given componet or application. 
+&lt;br&gt;
+&lt;br&gt;If you enjoy using this library, please buy one of our products at &lt;a href=" www.sparkfun.com"&gt;SparkFun.com&lt;/a&gt;.
+&lt;br&gt;
+&lt;br&gt;
+&lt;b&gt;Licensing:&lt;/b&gt; Creative Commons ShareAlike 4.0 International - https://creativecommons.org/licenses/by-sa/4.0/ 
+&lt;br&gt;
+&lt;br&gt;
+You are welcome to use this library for commercial purposes. For attribution, we ask that when you begin to sell your device using our footprint, you email us with a link to the product being sold. We want bragging rights that we helped (in a very small part) to create your 8th world wonder. We would like the opportunity to feature your device on our homepage.</description>
+<packages>
+<package name="SOT23-5">
+<description>&lt;b&gt;Small Outline Transistor&lt;/b&gt;</description>
+<wire x1="1.4" y1="-0.8" x2="-1.4" y2="-0.8" width="0.1524" layer="51"/>
+<wire x1="-1.4" y1="0.8" x2="1.4" y2="0.8" width="0.1524" layer="51"/>
+<wire x1="1.4" y1="0.8" x2="1.4" y2="-0.8" width="0.1524" layer="51"/>
+<wire x1="-1.4" y1="0.8" x2="-1.4" y2="-0.8" width="0.1524" layer="51"/>
+<smd name="1" x="-0.95" y="-1.3001" dx="0.55" dy="1.2" layer="1"/>
+<smd name="2" x="0" y="-1.3001" dx="0.55" dy="1.2" layer="1"/>
+<smd name="3" x="0.95" y="-1.3001" dx="0.55" dy="1.2" layer="1"/>
+<smd name="4" x="0.95" y="1.3001" dx="0.55" dy="1.2" layer="1"/>
+<smd name="5" x="-0.95" y="1.3001" dx="0.55" dy="1.2" layer="1"/>
+<rectangle x1="-1.2" y1="-1.5" x2="-0.7" y2="-0.85" layer="51"/>
+<rectangle x1="-0.25" y1="-1.5" x2="0.25" y2="-0.85" layer="51"/>
+<rectangle x1="0.7" y1="-1.5" x2="1.2" y2="-0.85" layer="51"/>
+<rectangle x1="0.7" y1="0.85" x2="1.2" y2="1.5" layer="51"/>
+<rectangle x1="-1.2" y1="0.85" x2="-0.7" y2="1.5" layer="51"/>
+<wire x1="1.27" y1="0.4294" x2="1.27" y2="-0.4294" width="0.2032" layer="21"/>
+<wire x1="-1.27" y1="-0.4294" x2="-1.27" y2="0.4294" width="0.2032" layer="21"/>
+<wire x1="-0.2684" y1="0.7088" x2="0.2684" y2="0.7088" width="0.2032" layer="21"/>
+<circle x="-1.6002" y="-1.016" radius="0.127" width="0" layer="21"/>
+<text x="-1.905" y="0" size="0.6096" layer="25" font="vector" ratio="20" rot="R90" align="bottom-center">&gt;NAME</text>
+<text x="2.54" y="0" size="0.6096" layer="27" font="vector" ratio="20" rot="R90" align="bottom-center">&gt;VALUE</text>
+</package>
+</packages>
+<symbols>
+<symbol name="OP-AMP">
+<wire x1="-3.81" y1="-1.905" x2="-3.81" y2="-3.175" width="0.1524" layer="94"/>
+<wire x1="-4.445" y1="2.54" x2="-3.175" y2="2.54" width="0.1524" layer="94"/>
+<wire x1="-4.445" y1="-2.54" x2="-3.175" y2="-2.54" width="0.1524" layer="94"/>
+<wire x1="5.08" y1="0" x2="-5.08" y2="5.08" width="0.4064" layer="94"/>
+<wire x1="-5.08" y1="5.08" x2="-5.08" y2="-5.08" width="0.4064" layer="94"/>
+<wire x1="-5.08" y1="-5.08" x2="5.08" y2="0" width="0.4064" layer="94"/>
+<pin name="+IN" x="-7.62" y="-2.54" visible="pad" length="short" direction="in"/>
+<pin name="-IN" x="-7.62" y="2.54" visible="pad" length="short" direction="in"/>
+<pin name="OUT" x="7.62" y="0" visible="pad" length="short" direction="out" rot="R180"/>
+<text x="-5.08" y="5.842" size="1.778" layer="95" font="vector">&gt;NAME</text>
+<text x="-5.08" y="-7.62" size="1.778" layer="95" font="vector">&gt;VALUE</text>
+</symbol>
+<symbol name="POWER_CONSORT">
+<wire x1="-2.54" y1="5.08" x2="2.54" y2="5.08" width="0.254" layer="94"/>
+<wire x1="2.54" y1="5.08" x2="2.54" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="2.54" y1="-5.08" x2="-2.54" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="-5.08" x2="-2.54" y2="5.08" width="0.254" layer="94"/>
+<pin name="P$V+" x="0" y="7.62" visible="pad" length="short" rot="R270"/>
+<pin name="P$V-" x="0" y="-7.62" visible="pad" length="short" rot="R90"/>
+<text x="-3.302" y="-5.08" size="1.778" layer="95" font="vector" rot="R90">&gt;NAME</text>
+<text x="5.08" y="-5.08" size="1.778" layer="95" font="vector" rot="R90">&gt;VALUE</text>
+<text x="0.127" y="-4.699" size="1.27" layer="94" font="vector" align="bottom-center">VEE</text>
+<text x="0.127" y="3.429" size="1.27" layer="94" font="vector" align="bottom-center">VCC</text>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="OPA344">
+<description>&lt;h3&gt;&lt;/h3&gt;
+&lt;p&gt;Single gate rail-to-rail output op-amp. Inputs extend 300mV past rails.&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://www.ti.com/product/OPA344"&gt;Datasheet&lt;/a&gt;&lt;/p&gt;
+&lt;h4&gt;SparkFun Products&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.sparkfun.com/products/8883"&gt;SparkFun Low Current Sensor&lt;/a&gt; (SEN-08883)&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.sparkfun.com/products/12758"&gt;SparkFun Electret Microphone Breakout&lt;/a&gt; (BOB-12758)&lt;/li&gt;
+&lt;/ul&gt;</description>
+<gates>
+<gate name="G1" symbol="OP-AMP" x="-10.16" y="0"/>
+<gate name="G2" symbol="POWER_CONSORT" x="7.62" y="0"/>
+</gates>
+<devices>
+<device name="" package="SOT23-5">
+<connects>
+<connect gate="G1" pin="+IN" pad="3"/>
+<connect gate="G1" pin="-IN" pad="4"/>
+<connect gate="G1" pin="OUT" pad="1"/>
+<connect gate="G2" pin="P$V+" pad="5"/>
+<connect gate="G2" pin="P$V-" pad="2"/>
+</connects>
+<technologies>
+<technology name="">
+<attribute name="PROD_ID" value="IC-08251" constant="no"/>
+<attribute name="VALUE" value="OPA344" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -5709,6 +5835,13 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <part name="SUPPLY11" library="SparkFun-PowerSymbols" deviceset="3.3V" device=""/>
 <part name="GND9" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 <part name="R5" library="SparkFun-Resistors" deviceset="43KOHM" device="-0603-1/10W-1%" value="43k"/>
+<part name="U$5" library="SparkFun-IC-Amplifiers" deviceset="OPA344" device="" value="OPA344"/>
+<part name="GND3" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
+<part name="SUPPLY6" library="SparkFun-PowerSymbols" deviceset="3.3V" device=""/>
+<part name="R6" library="SparkFun-Resistors" deviceset="100KOHM" device="-0603-1/10W-1%" value="100k"/>
+<part name="R7" library="SparkFun-Resistors" deviceset="4.7KOHM" device="-0603-1/10W-1%" value="4.7k"/>
+<part name="SUPPLY7" library="SparkFun-PowerSymbols" deviceset="3.3V" device=""/>
+<part name="GND10" library="SparkFun-PowerSymbols" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -5725,7 +5858,7 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <text x="88.9" y="66.04" size="2.54" layer="97" font="vector">Encoder &amp; Switches</text>
 <text x="17.78" y="63.5" size="2.54" layer="97" font="vector">Outputs</text>
 <text x="166.116" y="11.43" size="2.54" layer="94" font="vector">Andy England</text>
-<text x="236.22" y="7.62" size="2.54" layer="94" font="vector">v02</text>
+<text x="236.22" y="7.62" size="2.54" layer="94" font="vector">v04</text>
 </plain>
 <instances>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
@@ -5779,6 +5912,14 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <instance part="SUPPLY11" gate="G$1" x="33.02" y="139.7"/>
 <instance part="GND9" gate="1" x="71.12" y="132.08"/>
 <instance part="R5" gate="G$1" x="99.06" y="50.8" rot="R90"/>
+<instance part="U$5" gate="G1" x="162.56" y="50.8"/>
+<instance part="U$5" gate="G2" x="200.66" y="53.34"/>
+<instance part="GND3" gate="1" x="200.66" y="40.64"/>
+<instance part="SUPPLY6" gate="G$1" x="200.66" y="63.5"/>
+<instance part="R6" gate="G$1" x="142.24" y="55.88" rot="R90"/>
+<instance part="R7" gate="G$1" x="142.24" y="40.64" rot="R90"/>
+<instance part="SUPPLY7" gate="G$1" x="142.24" y="63.5"/>
+<instance part="GND10" gate="1" x="142.24" y="30.48"/>
 </instances>
 <busses>
 </busses>
@@ -5883,6 +6024,16 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <wire x1="58.42" y1="137.16" x2="71.12" y2="137.16" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="137.16" x2="71.12" y2="134.62" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="U$5" gate="G2" pin="P$V-"/>
+<pinref part="GND3" gate="1" pin="GND"/>
+<wire x1="200.66" y1="43.18" x2="200.66" y2="45.72" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="R7" gate="G$1" pin="1"/>
+<pinref part="GND10" gate="1" pin="GND"/>
+<wire x1="142.24" y1="33.02" x2="142.24" y2="35.56" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="BTN" class="0">
 <segment>
@@ -5903,6 +6054,11 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <pinref part="J6" gate="G$1" pin="2"/>
 <wire x1="58.42" y1="116.84" x2="60.96" y2="116.84" width="0.1524" layer="91"/>
 <label x="60.96" y="116.84" size="1.27" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="U$5" gate="G1" pin="-IN"/>
+<wire x1="154.94" y1="53.34" x2="152.4" y2="53.34" width="0.1524" layer="91"/>
+<label x="152.4" y="53.34" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$17" class="0">
@@ -6089,6 +6245,16 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <wire x1="27.94" y1="134.62" x2="33.02" y2="134.62" width="0.1524" layer="91"/>
 <wire x1="33.02" y1="134.62" x2="33.02" y2="139.7" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="U$5" gate="G2" pin="P$V+"/>
+<pinref part="SUPPLY6" gate="G$1" pin="3.3V"/>
+<wire x1="200.66" y1="63.5" x2="200.66" y2="60.96" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="R6" gate="G$1" pin="2"/>
+<pinref part="SUPPLY7" gate="G$1" pin="3.3V"/>
+<wire x1="142.24" y1="63.5" x2="142.24" y2="60.96" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="DL" class="0">
 <segment>
@@ -6175,6 +6341,22 @@ SparkFun BigTime Watch Kit&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;
 <pinref part="J6" gate="G$1" pin="1"/>
 <wire x1="58.42" y1="114.3" x2="60.96" y2="114.3" width="0.1524" layer="91"/>
 <label x="60.96" y="114.3" size="1.27" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="U$5" gate="G1" pin="OUT"/>
+<wire x1="170.18" y1="50.8" x2="172.72" y2="50.8" width="0.1524" layer="91"/>
+<label x="172.72" y="50.8" size="1.27" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="N$9" class="0">
+<segment>
+<pinref part="U$5" gate="G1" pin="+IN"/>
+<pinref part="R6" gate="G$1" pin="1"/>
+<wire x1="142.24" y1="48.26" x2="154.94" y2="48.26" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="50.8" x2="142.24" y2="48.26" width="0.1524" layer="91"/>
+<junction x="142.24" y="48.26"/>
+<pinref part="R7" gate="G$1" pin="2"/>
+<wire x1="142.24" y1="45.72" x2="142.24" y2="48.26" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
