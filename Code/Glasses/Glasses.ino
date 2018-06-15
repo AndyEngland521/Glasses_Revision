@@ -55,9 +55,9 @@ const int numberOfChannels = numLeds * 3; // Total number of channels you want t
 
 CRGB leftLeds[numLeds];
 CRGB rightLeds[numLeds];
-
-uint8_t leftEyeMap[numLeds / 2];
-uint8_t rightEyeMap[numLeds / 2];
+//eyemap[ring][angle]
+uint8_t leftEyeMap[5][255];
+uint8_t rightEyeMap[5][255];
 const uint8_t circleNum[5] = {4, 16, 25, 36, 45};
 
 // Artnet settings
@@ -67,24 +67,66 @@ const int startUniverse = 0;
 bool sendFrame = 1;
 int previousDataLength = 0;
 
+//Palette Stuff
+CRGBPalette16 currentPalette;
+TBlendType    currentBlending;
+
 void mapEye () //we map LED's to a 360 degree circle where 360 == 255
 {
   uint8_t numPrev;
-  for (int i = 0; i < 5; i++)
+  for (int row = 0; row < 5; row++)
   {
-    if (i == 0)
+    if (row == 0)
     {
       numPrev = 0;
     }
     else
     {
-      numPrev = circleNum[i - 1];
+      numPrev = circleNum[row - 1];
     }
-    for(int ledPosition = numPrev; ledPosition < numPrev + circleNum[i]; ledPosition++)
+    float stepsPerLed = 256 / circleNum[row];
+    for(int i = 0; i < circleNum[row]; i++)
     {
-      leftEyeMap[ledPosition] = 32 + (256 / circleNum[i]);
-      rightEyeMap[ledPosition] = 96 + (256 / circleNum[i]);
+      for (int j = i * stepsPerLed; j < (i + 1) * stepsPerLed; j++)
+      {
+        leftEyeMap[row][j] = 32 - (stepsPerLed / 2) + i + numPrev;
+        rightEyeMap[row][j] = 96 - (stepsPerLed / 2) + i + numPrev;
+      }
     }
+  }
+}
+
+void setRowAngle (uint8_t row, uint8_t angle, CRGB color)
+{
+  leftLeds[leftEyeMap[row][angle]] = color;
+  rightLeds[rightEyeMap[row][angle]] = color;
+}
+
+void setAngle (uint8_t angle, CRGB color)
+{
+  for (int row = 0; row < 5; row++)
+  {
+    setRowAngle(row, angle, color);
+  }
+}
+
+void gradientSpin ()
+{
+  for (int i = 0; i < 256; i++)
+  {
+    setAngle(i, ColorFromPalette(currentPalette, i, 255, currentBlending));
+  }
+}
+
+void printMap () //this function is to test if our mapping function works correctly.
+{
+  for (int row = 0; row < 5; row++)
+  {
+    for (int angle = 0; angle < 256; angle++)
+    {
+      Serial.print(leftEyeMap[row][angle]);
+    }
+    Serial.println();
   }
 }
 
