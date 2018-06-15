@@ -67,15 +67,44 @@ const int startUniverse = 0;
 bool sendFrame = 1;
 int previousDataLength = 0;
 
-void mapEye ()
+void mapEye () //we map LED's to a 360 degree circle where 360 == 255
 {
+  uint8_t numPrev;
   for (int i = 0; i < 5; i++)
   {
-    for(int ledPosition - )
+    if (i == 0)
     {
-      
+      numPrev = 0;
+    }
+    else
+    {
+      numPrev = circleNum[i - 1];
+    }
+    for(int ledPosition = numPrev; ledPosition < numPrev + circleNum[i]; ledPosition++)
+    {
+      leftEyeMap[ledPosition] = 32 + (256 / circleNum[i]);
+      rightEyeMap[ledPosition] = 96 + (256 / circleNum[i]);
     }
   }
+}
+
+//This sets a circle or row to one color.
+void setRow(uint8_t row, CRGB color)
+{
+  uint8_t numPrev;
+  if (row == 0)
+  {
+    numPrev = 0;
+  }
+  else
+  {
+    numPrev = circleNum[row - 1];
+  }
+  for(int ledPosition = numPrev; ledPosition < numPrev + circleNum[row]; ledPosition++)
+    {
+      leftLeds[ledPosition] = color;
+      rightLeds[ledPosition] = color;
+    }
 }
 
 // connect to wifi – returns true if successful or false if not
