@@ -25,7 +25,7 @@ MicroOLED oled(PIN_RESET, DC_JUMPER);
 //menuState selects which menu we are in (main, artnet, etc) while location tells where in each menu we are
 //menuSlotTotal tells us how menu available menulocation slots we have in each menu
 //modeSelect is which color mode is being displayed
-uint8_t modeSelect = 0;
+uint8_t modeSelect = 3;
 uint8_t menuState = 0;
 uint8_t menuLocation = 0;
 uint8_t menuSlotTotal[5] = {4, 2, 1, 2, 2};
@@ -59,6 +59,9 @@ CRGB rightLeds[numLeds];
 uint8_t leftEyeMap[5][255];
 uint8_t rightEyeMap[5][255];
 const uint8_t circleNum[5] = {4, 16, 25, 36, 45};
+const float stepsPerRow[5] = {64, 16, 10.24, 256 / 36, 256 / 45};
+uint8_t numPrev[5] = {0, 4, 20, 45, 81};
+uint8_t rotation = 0;
 
 // Artnet settings
 ArtnetWifi artnet;
@@ -67,30 +70,34 @@ const int startUniverse = 0;
 bool sendFrame = 1;
 int previousDataLength = 0;
 
+//Preset Colors
+CRGB red = CRGB::Red;
+CRGB cyan = CRGB::Cyan;
+CRGB black = CRGB::Black;
+
 //Palette Stuff
-CRGBPalette16 currentPalette;
-TBlendType    currentBlending;
+CRGBPalette16 currentPalette = 
+{
+cyan, red, black, black,
+red, cyan, black, black,
+cyan, red, black, black,
+red, cyan, black, black
+};
+TBlendType currentBlending = LINEARBLEND;
 
 void mapEye () //we map LED's to a 360 degree circle where 360 == 255
 {
-  uint8_t numPrev;
+  uint8_t leftAngleOffset;
+  uint8_t rightAngleOffset;
   for (int row = 0; row < 5; row++)
   {
-    if (row == 0)
+    for (int i = 0; i < circleNum[row]; i++) 
     {
-      numPrev = 0;
-    }
-    else
-    {
-      numPrev = circleNum[row - 1];
-    }
-    float stepsPerLed = 256 / circleNum[row];
-    for(int i = 0; i < circleNum[row]; i++)
-    {
-      for (int j = i * stepsPerLed; j < (i + 1) * stepsPerLed; j++)
+      for (int j = round(i * stepsPerRow[row]); j < round((i + 1) * stepsPerRow[row]); j++)
       {
-        leftEyeMap[row][j] = 32 - (stepsPerLed / 2) + i + numPrev;
-        rightEyeMap[row][j] = 96 - (stepsPerLed / 2) + i + numPrev;
+        leftAngleOffset = j + 32;
+        leftEyeMap[row][j] = i + numPrev[row];
+        rightEyeMap[row][j] = i + numPrev[row];
       }
     }
   }
@@ -114,17 +121,28 @@ void gradientSpin ()
 {
   for (int i = 0; i < 256; i++)
   {
-    setAngle(i, ColorFromPalette(currentPalette, i, 255, currentBlending));
+    uint8_t gradientPosition = i + rotation;
+    setAngle(i, ColorFromPalette(currentPalette, gradientPosition, 255, currentBlending));
   }
+  rotation++;
+  FastLED.show();
+  delay(10);
 }
 
 void printMap () //this function is to test if our mapping function works correctly.
 {
+  for (int angle = 0; angle < 256; angle++)
+    {
+      Serial.print(angle);
+      Serial.print(" ");
+    }
+    Serial.println();
   for (int row = 0; row < 5; row++)
   {
     for (int angle = 0; angle < 256; angle++)
     {
       Serial.print(leftEyeMap[row][angle]);
+      Serial.print(" ");
     }
     Serial.println();
   }
@@ -604,11 +622,15 @@ void ISR ()
 
 void setup()
 {
-  //Serial.begin(115200);
+  Serial.begin(115200);
   FastLED.addLeds<APA102, LEFT_DATA_PIN, LEFT_CLOCK_PIN, BGR>(leftLeds, numLeds);
   FastLED.addLeds<APA102, RIGHT_DATA_PIN, RIGHT_CLOCK_PIN, BGR>(rightLeds, numLeds);
+  //FastLED.setBrightness(195);
+  FastLED.setBrightness(32);
   off();
   rotary.setChangedHandler(checkRotary);
+  mapEye();
+  printMap();
   //attachInterrupt(digitalPinToInterrupt(ROTARY_PIN2), ISR, CHANGE);
   delay(100);
   oled.begin();    // Initialize the OLED
@@ -617,7 +639,7 @@ void setup()
   delay(500);     // Delay 1000 ms
   oled.clear(PAGE);
   splashScreen();
-  ConnectWifi();
+  //ConnectWifi();
   drawMenu();
   artnet.begin();
   // onDmxFrame will execute every time a packet is received by the ESP32
@@ -625,7 +647,14 @@ void setup()
 }
 
 void loop()
-{  
+{ 
+  /*for (int i = 0; i < 256; i++)
+  {
+    setAngle(i - 1, black);
+    setAngle(i, red);
+    FastLED.show();
+    delay(5); 
+  }*/
   switch (modeSelect)
   {
     case 0:
@@ -636,6 +665,9 @@ void loop()
       break;
     case 2:
       artnet.read();
+      break;
+    case 3:
+      gradientSpin();
       break;
   }
 }
