@@ -72,16 +72,16 @@ int previousDataLength = 0;
 
 //Preset Colors
 CRGB red = CRGB::Red;
-CRGB cyan = CRGB::Cyan;
+CRGB green = CRGB::Green;
 CRGB black = CRGB::Black;
 
 //Palette Stuff
 CRGBPalette16 currentPalette = 
 {
-cyan, red, black, black,
-red, cyan, black, black,
-cyan, red, black, black,
-red, cyan, black, black
+green, red, black, black,
+red, green, black, black,
+green, red, black, black,
+red, green, black, black
 };
 TBlendType currentBlending = LINEARBLEND;
 
@@ -95,9 +95,9 @@ void mapEye () //we map LED's to a 360 degree circle where 360 == 255
     {
       for (int j = round(i * stepsPerRow[row]); j < round((i + 1) * stepsPerRow[row]); j++)
       {
-        leftAngleOffset = j + 32;
-        leftEyeMap[row][j] = i + numPrev[row];
-        rightEyeMap[row][j] = i + numPrev[row];
+        leftAngleOffset = j - (stepsPerRow[row] / 2.0);
+        leftEyeMap[row][leftAngleOffset] = i + numPrev[row];
+        rightEyeMap[row][leftAngleOffset] = i + numPrev[row];
       }
     }
   }
