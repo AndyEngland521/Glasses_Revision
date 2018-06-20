@@ -10,6 +10,7 @@ This example may be copied under the terms of the MIT license, see the LICENSE f
 #include "FastLED.h"
 #include <Wire.h>  // Include Wire if you're using I2C
 #include <SFE_MicroOLED.h>
+#include "Splash.h"
 #include <ESPRotary.h>
 
 #define ROTARY_PIN1 16
@@ -25,10 +26,10 @@ MicroOLED oled(PIN_RESET, DC_JUMPER);
 //menuState selects which menu we are in (main, artnet, etc) while location tells where in each menu we are
 //menuSlotTotal tells us how menu available menulocation slots we have in each menu
 //modeSelect is which color mode is being displayed
-uint8_t modeSelect = 3;
+uint8_t modeSelect = 0;
 uint8_t menuState = 0;
 uint8_t menuLocation = 0;
-uint8_t menuSlotTotal[5] = {4, 2, 1, 2, 2};
+uint8_t menuSlotTotal[5] = {4, 2, 2, 2, 2};
 uint8_t asciiChar = 0;
 uint8_t charPosition = 0;
 bool editChar = false;
@@ -59,7 +60,7 @@ CRGB rightLeds[numLeds];
 uint8_t leftEyeMap[5][255];
 uint8_t rightEyeMap[5][255];
 const uint8_t circleNum[5] = {4, 16, 25, 36, 45};
-const float stepsPerRow[5] = {64, 16, 10.24, 256 / 36, 256 / 45};
+const float stepsPerRow[5] = {64, 16, 10.24, 7.11111111, 5.6888888};
 uint8_t numPrev[5] = {0, 4, 20, 45, 81};
 uint8_t rotation = 0;
 
@@ -72,32 +73,48 @@ int previousDataLength = 0;
 
 //Preset Colors
 CRGB red = CRGB::Red;
+CRGB orange = CRGB::Orange;
+CRGB yellow = CRGB::Yellow;
 CRGB green = CRGB::Green;
+CRGB cyan = CRGB::Cyan;
+CRGB blue = CRGB::Blue;
+CRGB magenta = CRGB::Magenta;
+CRGB gray = CRGB::Gray;
 CRGB black = CRGB::Black;
 
 //Palette Stuff
 CRGBPalette16 currentPalette = 
 {
-green, red, black, black,
-red, green, black, black,
-green, red, black, black,
-red, green, black, black
+gray, yellow, orange, red,
+magenta, blue, green, black, 
+gray, yellow, orange, red,
+magenta, blue, green, black
 };
 TBlendType currentBlending = LINEARBLEND;
 
 void mapEye () //we map LED's to a 360 degree circle where 360 == 255
 {
+  uint8_t centerOffset;
   uint8_t leftAngleOffset;
   uint8_t rightAngleOffset;
   for (int row = 0; row < 5; row++)
   {
+    if (row == 0)
+    {
+      centerOffset = -32;
+    }
+    else
+    {
+      centerOffset = 0;
+    }
     for (int i = 0; i < circleNum[row]; i++) 
     {
       for (int j = round(i * stepsPerRow[row]); j < round((i + 1) * stepsPerRow[row]); j++)
       {
-        leftAngleOffset = j - (stepsPerRow[row] / 2.0);
+        leftAngleOffset = j - round((stepsPerRow[row] / 2.0) + centerOffset - 16);
+        rightAngleOffset = j - round((stepsPerRow[row] / 2.0) + centerOffset - 84);
         leftEyeMap[row][leftAngleOffset] = i + numPrev[row];
-        rightEyeMap[row][leftAngleOffset] = i + numPrev[row];
+        rightEyeMap[row][rightAngleOffset] = i + numPrev[row];
       }
     }
   }
@@ -119,6 +136,8 @@ void setAngle (uint8_t angle, CRGB color)
 
 void gradientSpin ()
 {
+  rotary.loop();
+  checkButton();
   for (int i = 0; i < 256; i++)
   {
     uint8_t gradientPosition = i + rotation;
@@ -126,27 +145,10 @@ void gradientSpin ()
   }
   rotation++;
   FastLED.show();
-  delay(10);
+  //delay(10);
 }
 
-void printMap () //this function is to test if our mapping function works correctly.
-{
-  for (int angle = 0; angle < 256; angle++)
-    {
-      Serial.print(angle);
-      Serial.print(" ");
-    }
-    Serial.println();
-  for (int row = 0; row < 5; row++)
-  {
-    for (int angle = 0; angle < 256; angle++)
-    {
-      Serial.print(leftEyeMap[row][angle]);
-      Serial.print(" ");
-    }
-    Serial.println();
-  }
-}
+
 
 //This sets a circle or row to one color.
 void setRow(uint8_t row, CRGB color)
@@ -361,6 +363,9 @@ void selectButton ()
         case 0:
           modeSelect = 1;
           break;
+        case 1:
+          modeSelect = 3;
+          break;
       }
     break;
     case 3:
@@ -515,6 +520,10 @@ void header ()
       oled.setCursor(46, 0);
       oled.print("DMX");
       break;
+    case 3:
+      oled.setCursor(40, 0);
+      oled.print("Spin");
+      break;
   }
 }
 
@@ -564,6 +573,8 @@ void patternMenu ()
   oled.setFontType(0);
   oled.setCursor(7, 11);
   oled.print("Cylon");
+  oled.setCursor(7, 21);
+  oled.print("Spin");
   drawIndicator(0);
 }
 
@@ -590,15 +601,10 @@ void settingsMenu ()
 void splashScreen ()
 { 
   oled.invert(true);
-  oled.setFontType(1);
-  oled.setCursor(16, 10);
-  oled.print("EYEZ");
-  oled.setFontType(0);
-  oled.setCursor(0, 40);
-  oled.print("V0.1");
-  oled.display();
   oled.clear(PAGE);
-  delay(750);
+  oled.drawBitmap(Splashscreen);
+  oled.display();
+  delay(1500);
   oled.invert(false);
 }
 
@@ -630,14 +636,10 @@ void setup()
   off();
   rotary.setChangedHandler(checkRotary);
   mapEye();
-  printMap();
-  //attachInterrupt(digitalPinToInterrupt(ROTARY_PIN2), ISR, CHANGE);
-  delay(100);
   oled.begin();    // Initialize the OLED
   oled.clear(ALL); // Clear the display's internal memory
   oled.display();  // Display what's in the buffer (splashscreen)
-  delay(500);     // Delay 1000 ms
-  oled.clear(PAGE);
+  delay(500);     // Delay 500 ms
   splashScreen();
   //ConnectWifi();
   drawMenu();
