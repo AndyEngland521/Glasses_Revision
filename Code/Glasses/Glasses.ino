@@ -12,14 +12,17 @@ This example may be copied under the terms of the MIT license, see the LICENSE f
 #include <SFE_MicroOLED.h>
 #include "Splash.h"
 #include <ESPRotary.h>
+#include <EEPROM.h>
 
-#define ROTARY_PIN1 16
+#define ROTARY_PIN1 12
 #define ROTARY_PIN2 5
 
 ESPRotary rotary = ESPRotary(ROTARY_PIN1, ROTARY_PIN2, 4);
 
+//EEPROM Addresses.
+
 //Screen Settings
-#define PIN_RESET 15
+#define PIN_RESET 16
 #define DC_JUMPER 1
 MicroOLED oled(PIN_RESET, DC_JUMPER); 
 
@@ -136,8 +139,6 @@ void setAngle (uint8_t angle, CRGB color)
 
 void gradientSpin ()
 {
-  rotary.loop();
-  checkButton();
   for (int i = 0; i < 256; i++)
   {
     uint8_t gradientPosition = i + rotation;
@@ -235,8 +236,6 @@ void cylon ()
   static uint8_t hue2 = 0;
   // First slide the led in one direction
   for(int i = 0; i < numLeds / 2; i++) {
-    rotary.loop();
-    checkButton();
     // Set the i'th led to red 
     leftLeds[i] = CHSV(hue1++, 255, 255);
     rightLeds[i] = CHSV(hue2--, 255, 255);
@@ -251,8 +250,6 @@ void cylon ()
 
   // Now go in the other direction.  
   for(int i = (numLeds / 2)-1; i >= 0; i--) {
-    rotary.loop();
-    checkButton();
     // Set the i'th led to red 
     leftLeds[i] = CHSV(hue1++, 255, 255);
     rightLeds[i] = CHSV(hue2--, 255, 255);
@@ -306,19 +303,18 @@ void checkRotary (ESPRotary& rotary)
 void checkButton ()
 {
   button = analogRead(buttonPin);
-  if (button - oldButton > 50)
+  Serial.println(button);
+  Serial.println("trigger");
+  if (button > 600)
   {
-    if (button > 525 && oldButton < 100)
-    {
-      selectButton();
-    }
-    else if (button > 400 && oldButton < 100)
-    {
-      backButton();
-    }
-    drawMenu();
+    selectButton();
   }
-  oldButton = button;
+  else if (button < 600)
+  {
+    backButton();
+    Serial.println("trigger");
+  }
+  drawMenu();
 }
 
 void selectButton ()
@@ -610,8 +606,6 @@ void splashScreen ()
 
 void off()
 {
-  rotary.loop();
-  checkButton();
   for (int led = 0; led < 126; led++)
   {
     leftLeds[led] = CRGB::Black;
@@ -628,13 +622,24 @@ void ISR ()
 
 void setup()
 {
+  delay(1000);
+  EEPROM.begin(512);
   Serial.begin(115200);
   FastLED.addLeds<APA102, LEFT_DATA_PIN, LEFT_CLOCK_PIN, BGR>(leftLeds, numLeds);
   FastLED.addLeds<APA102, RIGHT_DATA_PIN, RIGHT_CLOCK_PIN, BGR>(rightLeds, numLeds);
   //FastLED.setBrightness(195);
   FastLED.setBrightness(32);
   off();
+  pinMode(ROTARY_PIN1, INPUT_PULLUP);
+  digitalWrite(ROTARY_PIN1, HIGH);
+  pinMode(ROTARY_PIN2, INPUT_PULLUP);
+  digitalWrite(ROTARY_PIN2, HIGH);
   rotary.setChangedHandler(checkRotary);
+  pinMode(15, INPUT_PULLUP);
+  digitalWrite(15, HIGH);
+  attachInterrupt(digitalPinToInterrupt(15), checkButton, FALLING);  
+  attachInterrupt(digitalPinToInterrupt(ROTARY_PIN1), ISR, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ROTARY_PIN2), ISR, CHANGE);
   mapEye();
   oled.begin();    // Initialize the OLED
   oled.clear(ALL); // Clear the display's internal memory
@@ -649,14 +654,7 @@ void setup()
 }
 
 void loop()
-{ 
-  /*for (int i = 0; i < 256; i++)
-  {
-    setAngle(i - 1, black);
-    setAngle(i, red);
-    FastLED.show();
-    delay(5); 
-  }*/
+{
   switch (modeSelect)
   {
     case 0:
