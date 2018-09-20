@@ -1,7 +1,7 @@
 /*
-This example will receive multiple universes via Artnet and control a strip of ws2811 leds via 
-Adafruit's NeoPixel library: https://github.com/adafruit/Adafruit_NeoPixel
-This example may be copied under the terms of the MIT license, see the LICENSE file for details
+  This example will receive multiple universes via Artnet and control a strip of ws2811 leds via
+  Adafruit's NeoPixel library: https://github.com/adafruit/Adafruit_NeoPixel
+  This example may be copied under the terms of the MIT license, see the LICENSE file for details
 */
 
 #include <ESP8266WiFi.h>
@@ -24,7 +24,7 @@ ESPRotary rotary = ESPRotary(ROTARY_PIN1, ROTARY_PIN2, 4);
 //Screen Settings
 #define PIN_RESET 16
 #define DC_JUMPER 1
-MicroOLED oled(PIN_RESET, DC_JUMPER); 
+MicroOLED oled(PIN_RESET, DC_JUMPER);
 
 //menuState selects which menu we are in (main, artnet, etc) while location tells where in each menu we are
 //menuSlotTotal tells us how menu available menulocation slots we have in each menu
@@ -86,12 +86,12 @@ CRGB gray = CRGB::Gray;
 CRGB black = CRGB::Black;
 
 //Palette Stuff
-CRGBPalette16 currentPalette = 
+CRGBPalette16 currentPalette =
 {
-gray, yellow, orange, red,
-magenta, blue, green, black, 
-gray, yellow, orange, red,
-magenta, blue, green, black
+  gray, yellow, orange, red,
+  magenta, blue, green, black,
+  gray, yellow, orange, red,
+  magenta, blue, green, black
 };
 TBlendType currentBlending = LINEARBLEND;
 
@@ -110,7 +110,7 @@ void mapEye () //we map LED's to a 360 degree circle where 360 == 255
     {
       centerOffset = 0;
     }
-    for (int i = 0; i < circleNum[row]; i++) 
+    for (int i = 0; i < circleNum[row]; i++)
     {
       for (int j = round(i * stepsPerRow[row]); j < round((i + 1) * stepsPerRow[row]); j++)
       {
@@ -163,11 +163,11 @@ void setRow(uint8_t row, CRGB color)
   {
     numPrev = circleNum[row - 1];
   }
-  for(int ledPosition = numPrev; ledPosition < numPrev + circleNum[row]; ledPosition++)
-    {
-      leftLeds[ledPosition] = color;
-      rightLeds[ledPosition] = color;
-    }
+  for (int ledPosition = numPrev; ledPosition < numPrev + circleNum[row]; ledPosition++)
+  {
+    leftLeds[ledPosition] = color;
+    rightLeds[ledPosition] = color;
+  }
 }
 
 // connect to wifi – returns true if successful or false if not
@@ -179,27 +179,27 @@ boolean ConnectWifi(void)
   WiFi.begin(ssid, password);
   //Serial.println("");
   //Serial.println("Connecting to WiFi");
-  
+
   // Wait for connection
   //Serial.print("Connecting");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     wifiLoading();
-    if (i > 20){
+    if (i > 20) {
       state = false;
       break;
     }
     i++;
   }
   drawMenu();
-  
+
   return state;
 }
 
 void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)
 {
   sendFrame = 1;
-  // set brightness of the whole strip 
+  // set brightness of the whole strip
   if (universe == 15)
   {
     FastLED.setBrightness(data[0]);
@@ -208,26 +208,26 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
   for (int i = 0; i < length / 3; i++)
   {
     int led = i + (universe - startUniverse) * (previousDataLength / 3);
-    if (led < numLeds /2)
+    if (led < numLeds / 2)
     {
       rightLeds[led] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
     }
     else
-    {  
+    {
       leftLeds[led - 170] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
     }
   }
-  previousDataLength = length;     
+  previousDataLength = length;
   FastLED.show();
 }
 
-void fadeall() 
-{ 
-  for(int i = 0; i < numLeds; i++) 
-  { 
+void fadeall()
+{
+  for (int i = 0; i < numLeds; i++)
+  {
     leftLeds[i].nscale8(250);
-    rightLeds[i].nscale8(250); 
-  } 
+    rightLeds[i].nscale8(250);
+  }
 }
 
 void cylon ()
@@ -235,12 +235,12 @@ void cylon ()
   static uint8_t hue1 = 0;
   static uint8_t hue2 = 0;
   // First slide the led in one direction
-  for(int i = 0; i < numLeds / 2; i++) {
-    // Set the i'th led to red 
+  for (int i = 0; i < numLeds / 2; i++) {
+    // Set the i'th led to red
     leftLeds[i] = CHSV(hue1++, 255, 255);
     rightLeds[i] = CHSV(hue2--, 255, 255);
     // Show the leds
-    FastLED.show(); 
+    FastLED.show();
     // now that we've shown the leds, reset the i'th led to black
     // leds[i] = CRGB::Black;
     fadeall();
@@ -248,9 +248,9 @@ void cylon ()
     delay(10);
   }
 
-  // Now go in the other direction.  
-  for(int i = (numLeds / 2)-1; i >= 0; i--) {
-    // Set the i'th led to red 
+  // Now go in the other direction.
+  for (int i = (numLeds / 2) - 1; i >= 0; i--) {
+    // Set the i'th led to red
     leftLeds[i] = CHSV(hue1++, 255, 255);
     rightLeds[i] = CHSV(hue2--, 255, 255);
     // Show the leds
@@ -303,8 +303,6 @@ void checkRotary (ESPRotary& rotary)
 void checkButton ()
 {
   button = analogRead(buttonPin);
-  Serial.println(button);
-  Serial.println("trigger");
   if (button > 600)
   {
     selectButton();
@@ -312,17 +310,16 @@ void checkButton ()
   else if (button < 600)
   {
     backButton();
-    Serial.println("trigger");
   }
   drawMenu();
 }
 
 void selectButton ()
 {
-  switch (menuState) 
+  switch (menuState)
   {
     case 0:
-      switch (menuLocation) 
+      switch (menuLocation)
       {
         case 0:
           menuState = 1;
@@ -352,7 +349,7 @@ void selectButton ()
           modeSelect = 2;
           break;
       }
-    break;
+      break;
     case 2:
       switch (menuLocation)
       {
@@ -363,14 +360,14 @@ void selectButton ()
           modeSelect = 3;
           break;
       }
-    break;
+      break;
     case 3:
       switch (menuLocation)
       {
         case 0:
           break;
       }
-    break;
+      break;
     case 4:
       switch (menuLocation)
       {
@@ -396,7 +393,7 @@ void selectButton ()
 
 void backButton ()
 {
-  switch (menuState) 
+  switch (menuState)
   {
     case 0:
       break;
@@ -424,20 +421,20 @@ void backButton ()
       else {
         editChar = false;
       }
-      break;    
+      break;
   }
 
 }
 
-void drawMenu() 
-{ 
+void drawMenu()
+{
   oled.clear(PAGE);
   header();
   switch (menuState)
   {
     case 0:
       mainMenu();
-      break;      
+      break;
     case 1:
       artnetMenu();
       break;
@@ -477,7 +474,7 @@ void changeStringMenu ()
     if (i == charPosition)
     {
       oled.setColor(BLACK);
-      oled.write((int)editString[i]); 
+      oled.write((int)editString[i]);
       oled.setColor(WHITE);
     }
     else
@@ -503,7 +500,7 @@ void header ()
   oled.setCursor(0, 0);
   oled.print("EYEZ");
   oled.setFontType(0);
-  switch(modeSelect) {
+  switch (modeSelect) {
     case 0:
       oled.setCursor(46, 0);
       oled.print("Off");
@@ -595,7 +592,7 @@ void settingsMenu ()
 }
 
 void splashScreen ()
-{ 
+{
   oled.invert(true);
   oled.clear(PAGE);
   oled.drawBitmap(Splashscreen);
@@ -622,8 +619,14 @@ void ISR ()
 
 void setup()
 {
-  delay(1000);
-  EEPROM.begin(512);
+  //EEPROM.begin(512);
+  delay(500);
+  Wire.begin();
+  oled.begin();    // Initialize the OLED
+  oled.clear(ALL); // Clear the display's internal memory
+  oled.display();  // Display what's in the buffer (splashscreen)
+  delay(500);     // Delay 500 ms
+  splashScreen();
   Serial.begin(115200);
   FastLED.addLeds<APA102, LEFT_DATA_PIN, LEFT_CLOCK_PIN, BGR>(leftLeds, numLeds);
   FastLED.addLeds<APA102, RIGHT_DATA_PIN, RIGHT_CLOCK_PIN, BGR>(rightLeds, numLeds);
@@ -637,15 +640,11 @@ void setup()
   rotary.setChangedHandler(checkRotary);
   pinMode(15, INPUT_PULLUP);
   digitalWrite(15, HIGH);
-  attachInterrupt(digitalPinToInterrupt(15), checkButton, FALLING);  
+  attachInterrupt(digitalPinToInterrupt(15), checkButton, FALLING);
   attachInterrupt(digitalPinToInterrupt(ROTARY_PIN1), ISR, CHANGE);
   attachInterrupt(digitalPinToInterrupt(ROTARY_PIN2), ISR, CHANGE);
   mapEye();
-  oled.begin();    // Initialize the OLED
-  oled.clear(ALL); // Clear the display's internal memory
-  oled.display();  // Display what's in the buffer (splashscreen)
-  delay(500);     // Delay 500 ms
-  splashScreen();
+
   //ConnectWifi();
   drawMenu();
   artnet.begin();
