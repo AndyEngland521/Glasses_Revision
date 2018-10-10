@@ -1,10 +1,4 @@
-/*
-  This example will receive multiple universes via Artnet and control a strip of ws2811 leds via
-  Adafruit's NeoPixel library: https://github.com/adafruit/Adafruit_NeoPixel
-  This example may be copied under the terms of the MIT license, see the LICENSE file for details
-*/
-
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 #include <WiFiUdp.h>
 #include <ArtnetWifi.h>
 #include "FastLED.h"
@@ -14,15 +8,15 @@
 #include <ESPRotary.h>
 #include <EEPROM.h>
 
-#define ROTARY_PIN1 12
-#define ROTARY_PIN2 5
+#define ROTARY_PIN1 32
+#define ROTARY_PIN2 14  
 
 ESPRotary rotary = ESPRotary(ROTARY_PIN1, ROTARY_PIN2, 4);
 
 //EEPROM Addresses.
 
 //Screen Settings
-#define PIN_RESET 16
+#define PIN_RESET 13
 #define DC_JUMPER 1
 MicroOLED oled(PIN_RESET, DC_JUMPER);
 
@@ -36,26 +30,36 @@ uint8_t menuSlotTotal[5] = {4, 2, 2, 2, 2};
 uint8_t asciiChar = 0;
 uint8_t charPosition = 0;
 bool editChar = false;
-uint16_t button = 0;
+uint16_t button1 = 0;
+uint16_t button2 = 0;
 uint16_t oldButton = 0;
 long encoder  = 0;
 long oldEncoder  = 0;
-#define buttonPin A0
+#define buttonPin1 27
+#define buttonPin2 33
 
 //Wifi settings
 char ssid[] = "NECTARKATZ";
 char password[] = "garrettiscuffed";
 char* editString;
 
+IPAddress local_IP(192, 168, 1, 184);
+// Set your Gateway IP address
+IPAddress gateway(192, 168, 1, 1);
+
+IPAddress subnet(255, 255, 0, 0);
+IPAddress primaryDNS(8, 8, 8, 8);   //optional
+IPAddress secondaryDNS(8, 8, 4, 4);
+
 // LED Strips
 const int numLeds = 252; // change for your setup
 const int numberOfChannels = numLeds * 3; // Total number of channels you want to receive (1 led = 3 channels)
 
-#define LEFT_DATA_PIN 13
-#define LEFT_CLOCK_PIN 12
+#define LEFT_DATA_PIN 21
+#define LEFT_CLOCK_PIN 16
 
-#define RIGHT_DATA_PIN 0
-#define RIGHT_CLOCK_PIN 4
+#define RIGHT_DATA_PIN 17
+#define RIGHT_CLOCK_PIN 16
 
 CRGB leftLeds[numLeds];
 CRGB rightLeds[numLeds];
@@ -176,12 +180,17 @@ boolean ConnectWifi(void)
   boolean state = true;
   int i = 0;
 
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) 
+  {
+    Serial.println("STA Failed to configure");
+  }
+
   WiFi.begin(ssid, password);
-  //Serial.println("");
-  //Serial.println("Connecting to WiFi");
+  Serial.println("");
+  Serial.println("Connecting to WiFi");
 
   // Wait for connection
-  //Serial.print("Connecting");
+  Serial.print("Connecting");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     wifiLoading();
@@ -302,13 +311,18 @@ void checkRotary (ESPRotary& rotary)
 
 void checkButton ()
 {
-  button = analogRead(buttonPin);
-  if (button > 600)
+
+  button1 = digitalRead(buttonPin1);
+  button2 = digitalRead(buttonPin2);
+  delay(20);
+  if (button1 == true)
   {
+    Serial.println("Selectbutton");
     selectButton();
   }
-  else if (button < 600)
+  if (button2 == true)
   {
+    Serial.println("backbutton");
     backButton();
   }
   drawMenu();
@@ -318,7 +332,7 @@ void selectButton ()
 {
   switch (menuState)
   {
-    case 0:
+    case 0://Main Menu?
       switch (menuLocation)
       {
         case 0:
@@ -339,18 +353,25 @@ void selectButton ()
           break;
       }
       break;
-    case 1:
+    case 1: //ArtNet Menu
       switch (menuLocation)
       {
         case 0:
-          ConnectWifi();
+          if (WiFi.status() == WL_CONNECTED)
+          {
+            modeSelect = 2;
+          }
+          else
+          {
+            ConnectWifi();
+          }
           break;
         case 1:
-          modeSelect = 2;
+          modeSelect = 0;
           break;
       }
       break;
-    case 2:
+    case 2://patterns
       switch (menuLocation)
       {
         case 0:
@@ -361,10 +382,14 @@ void selectButton ()
           break;
       }
       break;
-    case 3:
+    case 3://colors
       switch (menuLocation)
       {
         case 0:
+          menuState = 5;
+          menuLocation = 0;
+          break;
+        case 1:
           break;
       }
       break;
@@ -377,8 +402,11 @@ void selectButton ()
           break;
       }
       break;
-    case 5:
-      editChar = !editChar;
+    case 5://color editing
+    
+      //code to edit characters in a string using rotary
+      
+      /*editChar = !editChar;
       if (editChar == true)
       {
         rotary.setPosition(editString[charPosition]);
@@ -386,7 +414,7 @@ void selectButton ()
       else
       {
         rotary.resetPosition();
-      }
+      }*/
       break;
   }
 }
@@ -395,13 +423,13 @@ void backButton ()
 {
   switch (menuState)
   {
-    case 0:
+    case 0://Main Menu
       break;
-    case 1:
+    case 1://Artnet Menu
       menuState = 0;
       menuLocation = 0;
       break;
-    case 2:
+    case 2://Patterns
       menuState = 0;
       menuLocation = 0;
       break;
@@ -414,13 +442,15 @@ void backButton ()
       menuLocation = 0;
       break;
     case 5:
-      if (editChar == false)
+      
+      //character editing
+      /*if (editChar == false)
       {
         menuState = 4;
       }
       else {
         editChar = false;
-      }
+      }*/
       break;
   }
 
@@ -463,10 +493,12 @@ void changeStringMenu ()
     case 0:
       editString = ssid;
       oled.print("SSID");
+      Serial.println("SSID");
       break;
     case 1:
       editString = password;
       oled.print("Password");
+      Serial.println("Password");
       break;
   }
   oled.setCursor(0, 21);
@@ -475,12 +507,15 @@ void changeStringMenu ()
     {
       oled.setColor(BLACK);
       oled.write((int)editString[i]);
+      Serial.print("A");
+      Serial.print(editString[i]);
       oled.setColor(WHITE);
     }
     else
     {
       oled.setColor(WHITE);
       oled.write((int)editString[i]);
+      Serial.print(editString[i]);
     }
   }
 }
@@ -488,9 +523,9 @@ void changeStringMenu ()
 void wifiLoading()
 {
   oled.clear(PAGE);
-  oled.setFontType(1);
   oled.setCursor(0, 0);
   oled.print("CONNECTING");
+  Serial.print("CONNECTING");
   oled.display();
 }
 
@@ -499,23 +534,28 @@ void header ()
   oled.setFontType(0);
   oled.setCursor(0, 0);
   oled.print("EYEZ");
+  Serial.print("EYEZ    ");
   oled.setFontType(0);
   switch (modeSelect) {
     case 0:
       oled.setCursor(46, 0);
       oled.print("Off");
+      Serial.println("Off");
       break;
     case 1:
       oled.setCursor(40, 0);
       oled.print("Cyln");
+      Serial.println("CYLN");
       break;
     case 2:
       oled.setCursor(46, 0);
       oled.print("DMX");
+      Serial.println("DMX");
       break;
     case 3:
       oled.setCursor(40, 0);
       oled.print("Spin");
+      Serial.println("SPIN");
       break;
   }
 }
@@ -525,6 +565,7 @@ void drawIndicator (int offset)
   int yPosition = 11 + (10 * menuLocation) + offset;
   oled.setCursor(0, yPosition);
   oled.write(253);
+  Serial.println(menuLocation);
 }
 
 void mainMenu ()
@@ -532,12 +573,16 @@ void mainMenu ()
   oled.setFontType(0);
   oled.setCursor(7, 11);
   oled.print("ArtNet");
+  Serial.println("ArtNet");
   oled.setCursor(7, 21);
   oled.print("Patterns");
+  Serial.println("Patterns");
   oled.setCursor(7, 31);
   oled.print("Colors");
+  Serial.println("Colors");
   oled.setCursor(7, 41);
   oled.print("Settings");
+  Serial.println("Settings");
   drawIndicator(0);
 }
 
@@ -545,20 +590,23 @@ void artnetMenu ()
 {
   oled.setFontType(0);
   oled.setCursor(7, 11);
-  oled.print("Str:");
-  oled.print(wifiStatus());
-  oled.setCursor(7, 21);
   if (WiFi.status() == WL_CONNECTED)
   {
-    oled.print(WiFi.localIP());
+    String wifi = WiFi.localIP().toString().substring(8, 13);
+    oled.print("IP: ");
+    Serial.print("IP: ");
+    oled.print(wifi);
+    Serial.println(wifi);
   }
   else
   {
     oled.print("Connect?");
+    Serial.println("Connect?");
   }
-  oled.setCursor(7, 41);
-  oled.print("Use?");
-  drawIndicator(10);
+  oled.setCursor(7, 21);
+  oled.print("Off");
+  Serial.print("Off");
+  drawIndicator(0);
 }
 
 void patternMenu ()
@@ -566,8 +614,10 @@ void patternMenu ()
   oled.setFontType(0);
   oled.setCursor(7, 11);
   oled.print("Cylon");
+  Serial.println("Cylon");
   oled.setCursor(7, 21);
   oled.print("Spin");
+  Serial.println("Spin");
   drawIndicator(0);
 }
 
@@ -576,8 +626,10 @@ void colorMenu ()
   oled.setFontType(0);
   oled.setCursor(7, 11);
   oled.print("HSV");
+  Serial.println("HSV");
   oled.setCursor(7, 21);
   oled.print("RGB");
+  Serial.println("RGB");
   drawIndicator(0);
 }
 
@@ -586,8 +638,10 @@ void settingsMenu ()
   oled.setFontType(0);
   oled.setCursor(7, 11);
   oled.print("SSID");
+  Serial.println("SSID");
   oled.setCursor(7, 21);
   oled.print("Password");
+  Serial.println("Password");
   drawIndicator(0);
 }
 
@@ -614,19 +668,14 @@ void off()
 
 void ISR ()
 {
+  Serial.println("ROTARY");
   rotary.loop();
 }
 
 void setup()
 {
-  //EEPROM.begin(512);
-  delay(500);
-  Wire.begin();
-  oled.begin();    // Initialize the OLED
-  oled.clear(ALL); // Clear the display's internal memory
-  oled.display();  // Display what's in the buffer (splashscreen)
-  delay(500);     // Delay 500 ms
-  splashScreen();
+  delay(1000);
+  EEPROM.begin(512);
   Serial.begin(115200);
   FastLED.addLeds<APA102, LEFT_DATA_PIN, LEFT_CLOCK_PIN, BGR>(leftLeds, numLeds);
   FastLED.addLeds<APA102, RIGHT_DATA_PIN, RIGHT_CLOCK_PIN, BGR>(rightLeds, numLeds);
@@ -638,14 +687,21 @@ void setup()
   pinMode(ROTARY_PIN2, INPUT_PULLUP);
   digitalWrite(ROTARY_PIN2, HIGH);
   rotary.setChangedHandler(checkRotary);
-  pinMode(15, INPUT_PULLUP);
-  digitalWrite(15, HIGH);
-  attachInterrupt(digitalPinToInterrupt(15), checkButton, FALLING);
+  pinMode(buttonPin1, INPUT);
+  digitalWrite(buttonPin1, LOW);
+  attachInterrupt(digitalPinToInterrupt(buttonPin1), checkButton, RISING);  
+  pinMode(buttonPin2, INPUT);
+  digitalWrite(buttonPin1, LOW);
+  attachInterrupt(digitalPinToInterrupt(buttonPin2), checkButton, RISING);
   attachInterrupt(digitalPinToInterrupt(ROTARY_PIN1), ISR, CHANGE);
   attachInterrupt(digitalPinToInterrupt(ROTARY_PIN2), ISR, CHANGE);
   mapEye();
-
-  //ConnectWifi();
+  oled.begin();    // Initialize the OLED
+  oled.clear(ALL); // Clear the display's internal memory
+  oled.display();  // Display what's in the buffer (splashscreen)
+  delay(500);     // Delay 500 ms
+  splashScreen();
+  ConnectWifi();
   drawMenu();
   artnet.begin();
   // onDmxFrame will execute every time a packet is received by the ESP32
