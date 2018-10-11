@@ -3,72 +3,75 @@
 #include <ArtnetWifi.h>
 #include "FastLED.h"
 #include <Wire.h>  // Include Wire if you're using I2C
-#include <SFE_MicroOLED.h>
+#include <SFE_MicroOLED.h> //Make sure to edit Wire.begin in hardware.cpp when changing platforms
 #include "Splash.h"
 #include <ESPRotary.h>
 #include <EEPROM.h>
 
 #define ROTARY_PIN1 32
-#define ROTARY_PIN2 14  
-
-ESPRotary rotary = ESPRotary(ROTARY_PIN1, ROTARY_PIN2, 4);
-
-//EEPROM Addresses.
-
-//Screen Settings
-#define PIN_RESET 13
-#define DC_JUMPER 1
-MicroOLED oled(PIN_RESET, DC_JUMPER);
-
-//menuState selects which menu we are in (main, artnet, etc) while location tells where in each menu we are
-//menuSlotTotal tells us how menu available menulocation slots we have in each menu
-//modeSelect is which color mode is being displayed
-uint8_t modeSelect = 0;
-uint8_t menuState = 0;
-uint8_t menuLocation = 0;
-uint8_t menuSlotTotal[5] = {4, 2, 2, 2, 2};
-uint8_t asciiChar = 0;
-uint8_t charPosition = 0;
-bool editChar = false;
-uint16_t button1 = 0;
-uint16_t button2 = 0;
-uint16_t oldButton = 0;
-long encoder  = 0;
-long oldEncoder  = 0;
+#define ROTARY_PIN2 14
 #define buttonPin1 27
 #define buttonPin2 33
+#define PIN_RESET 13 //OLED
+#define DC_JUMPER 1 //OLED
+#define LEFT_DATA_PIN 21
+#define RIGHT_DATA_PIN 17
+#define CLOCK_PIN 16
+
+ESPRotary rotary = ESPRotary(ROTARY_PIN1, ROTARY_PIN2, 4);
+MicroOLED oled(PIN_RESET, DC_JUMPER);//Change hardware.cpp to initialize proper wire pins for esp32 WROOOM(23,22), may change for sparkfun wroom
+
+//Menus (Consider a struct once things are nailed down)
+enum colorMode {
+  Off,
+  DMX,
+  Cylon,
+  Ripple
+};
+enum menu {
+  Main = 0,
+  ArtNet = 1,
+  Patterns = 2,
+  Colors = 3,
+  Settings = 4,
+  StringEdit = 5,
+  HSVEdit = 6,
+  RGBEdit = 7
+};
+colorMode pattern = Off;
+menu page = Main;
+uint8_t menuLocation = 0; //Tracks location in a menu
+uint8_t menuSlotTotal[5] = {4, 2, 2, 2, 2};
+
+uint8_t asciiChar = 0;
+uint8_t charPosition = 0;//consider changing to "editPosition"
+bool editChar = false;//Consider changing to one variable? "edit"
+bool editColor = false;
+uint16_t button1 = 0;
+uint16_t button2 = 0;
+long encoder = 0;
 
 //Wifi settings
 char ssid[] = "NECTARKATZ";
 char password[] = "garrettiscuffed";
-char* editString;
-
 IPAddress local_IP(192, 168, 1, 184);
-// Set your Gateway IP address
 IPAddress gateway(192, 168, 1, 1);
-
 IPAddress subnet(255, 255, 0, 0);
 IPAddress primaryDNS(8, 8, 8, 8);   //optional
 IPAddress secondaryDNS(8, 8, 4, 4);
-
-// LED Strips
+char* editString;
 const int numLeds = 252; // change for your setup
 const int numberOfChannels = numLeds * 3; // Total number of channels you want to receive (1 led = 3 channels)
 
-#define LEFT_DATA_PIN 21
-#define LEFT_CLOCK_PIN 16
-
-#define RIGHT_DATA_PIN 17
-#define RIGHT_CLOCK_PIN 16
-
+//LED's and Map
 CRGB leftLeds[numLeds];
 CRGB rightLeds[numLeds];
-//eyemap[ring][angle]
 uint8_t leftEyeMap[5][255];
 uint8_t rightEyeMap[5][255];
 const uint8_t circleNum[5] = {4, 16, 25, 36, 45};
 const float stepsPerRow[5] = {64, 16, 10.24, 7.11111111, 5.6888888};
 uint8_t numPrev[5] = {0, 4, 20, 45, 81};
+//Value to rotate around circle
 uint8_t rotation = 0;
 
 // Artnet settings
@@ -92,7 +95,7 @@ CRGB black = CRGB::Black;
 //Palette Stuff
 CRGBPalette16 currentPalette =
 {
-  gray, yellow, orange, red,
+  red, yellow, orange, red,
   magenta, blue, green, black,
   gray, yellow, orange, red,
   magenta, blue, green, black
@@ -140,20 +143,6 @@ void setAngle (uint8_t angle, CRGB color)
     setRowAngle(row, angle, color);
   }
 }
-
-void gradientSpin ()
-{
-  for (int i = 0; i < 256; i++)
-  {
-    uint8_t gradientPosition = i + rotation;
-    setAngle(i, ColorFromPalette(currentPalette, gradientPosition, 255, currentBlending));
-  }
-  rotation++;
-  FastLED.show();
-  //delay(10);
-}
-
-
 
 //This sets a circle or row to one color.
 void setRow(uint8_t row, CRGB color)
@@ -205,74 +194,7 @@ boolean ConnectWifi(void)
   return state;
 }
 
-void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)
-{
-  sendFrame = 1;
-  // set brightness of the whole strip
-  if (universe == 15)
-  {
-    FastLED.setBrightness(data[0]);
-  }
-  // read universe and put into the right part of the display buffer
-  for (int i = 0; i < length / 3; i++)
-  {
-    int led = i + (universe - startUniverse) * (previousDataLength / 3);
-    if (led < numLeds / 2)
-    {
-      rightLeds[led] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
-    }
-    else
-    {
-      leftLeds[led - 170] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
-    }
-  }
-  previousDataLength = length;
-  FastLED.show();
-}
-
-void fadeall()
-{
-  for (int i = 0; i < numLeds; i++)
-  {
-    leftLeds[i].nscale8(250);
-    rightLeds[i].nscale8(250);
-  }
-}
-
-void cylon ()
-{
-  static uint8_t hue1 = 0;
-  static uint8_t hue2 = 0;
-  // First slide the led in one direction
-  for (int i = 0; i < numLeds / 2; i++) {
-    // Set the i'th led to red
-    leftLeds[i] = CHSV(hue1++, 255, 255);
-    rightLeds[i] = CHSV(hue2--, 255, 255);
-    // Show the leds
-    FastLED.show();
-    // now that we've shown the leds, reset the i'th led to black
-    // leds[i] = CRGB::Black;
-    fadeall();
-    // Wait a little bit before we loop around and do it again
-    delay(10);
-  }
-
-  // Now go in the other direction.
-  for (int i = (numLeds / 2) - 1; i >= 0; i--) {
-    // Set the i'th led to red
-    leftLeds[i] = CHSV(hue1++, 255, 255);
-    rightLeds[i] = CHSV(hue2--, 255, 255);
-    // Show the leds
-    FastLED.show();
-    // now that we've shown the leds, reset the i'th led to black
-    // leds[i] = CRGB::Black;
-    fadeall();
-    // Wait a little bit before we loop around and do it again
-    delay(10);
-  }
-}
-
-//this function will write wifi status to different things based on wht page it's on, maybe pass the page in as an argument?
+//this function will write wifi status to different things based on what page it's on, maybe pass the page in as an argument?
 int wifiStatus()
 {
   long rssi = WiFi.RSSI();
@@ -285,17 +207,31 @@ int wifiStatus()
   }
 }
 
+/*
+ * Button / Rotary Handling
+ */
+
 void checkRotary (ESPRotary& rotary)
 {
-  if (menuState != 5)
+  if (page != StringEdit && page != HSVEdit && page != RGBEdit)//fix this so this block is at end of switch statement
   {
-    menuLocation = rotary.getPosition() % menuSlotTotal[menuState];
-    if (menuLocation < 0) {
-      menuLocation = 0;
-    }
+    menuLocation = rotary.getPosition() % menuSlotTotal[page];
   }
   else
   {
+    if (editColor == true)
+    {
+      switch(menuLocation)
+      {
+        case 0:
+        uint8_t colorValue = currentPalette[0];
+        Serial.println(currentPalette[1]);
+        currentPalette[1] = colorValue;
+        Serial.println(currentPalette[1]);
+      }
+    }
+    //Code for editing characters
+    /*
     if (editChar == false)
     {
       charPosition = rotary.getPosition() % (strlen(editString) + 1);
@@ -303,11 +239,16 @@ void checkRotary (ESPRotary& rotary)
     else
     {
       editString[charPosition] = abs(rotary.getPosition() % 96) + 32;
-    }
+    }*/
   }
   drawMenu();
 }
 
+void encoderCheck ()
+{
+  Serial.println("ROTARY");
+  rotary.loop();
+}
 
 void checkButton ()
 {
@@ -317,12 +258,10 @@ void checkButton ()
   delay(20);
   if (button1 == true)
   {
-    Serial.println("Selectbutton");
     selectButton();
   }
   if (button2 == true)
   {
-    Serial.println("backbutton");
     backButton();
   }
   drawMenu();
@@ -330,36 +269,36 @@ void checkButton ()
 
 void selectButton ()
 {
-  switch (menuState)
+  switch (page)
   {
-    case 0://Main Menu?
+    case Main:
       switch (menuLocation)
       {
         case 0:
-          menuState = 1;
+          page = ArtNet;
           menuLocation = 0;
           break;
         case 1:
-          menuState = 2;
+          page = Patterns;
           menuLocation = 0;
           break;
         case 2:
-          menuState = 3;
+          page = Colors;
           menuLocation = 0;
           break;
         case 3:
-          menuState = 4;
+          page = Settings;
           menuLocation = 0;
           break;
       }
       break;
-    case 1: //ArtNet Menu
+    case ArtNet:
       switch (menuLocation)
       {
-        case 0:
+        case 0://DMX/ConnectWiFi
           if (WiFi.status() == WL_CONNECTED)
           {
-            modeSelect = 2;
+            pattern = DMX;
           }
           else
           {
@@ -367,46 +306,57 @@ void selectButton ()
           }
           break;
         case 1:
-          modeSelect = 0;
+          pattern = Off;
           break;
       }
       break;
-    case 2://patterns
+    case Patterns:
       switch (menuLocation)
       {
         case 0:
-          modeSelect = 1;
+          pattern = Cylon;
           break;
         case 1:
-          modeSelect = 3;
+          pattern = Ripple;
           break;
       }
       break;
-    case 3://colors
+    case Colors://colors
       switch (menuLocation)
       {
-        case 0:
-          menuState = 5;
+        case 0://Edit HSV
+          page = HSVEdit;
           menuLocation = 0;
           break;
-        case 1:
+        case 1:       
+          page = RGBEdit;
+          menuLocation = 0;
           break;
       }
       break;
-    case 4:
+    case Settings://Do I even need this menu? we'll see
       switch (menuLocation)
       {
         case 0:
         case 1:
-          menuState = 5;
           break;
       }
       break;
-    case 5://color editing
-    
+    case RGBEdit://color editing    
       //code to edit characters in a string using rotary
-      
-      /*editChar = !editChar;
+      if (editColor == true)
+      {
+        rotary.setPosition(editString[charPosition]);
+      }
+      else
+      {
+        rotary.resetPosition();
+      }
+      break;
+    case HSVEdit:
+      break;
+    case StringEdit:
+      editChar = !editChar;
       if (editChar == true)
       {
         rotary.setPosition(editString[charPosition]);
@@ -414,158 +364,64 @@ void selectButton ()
       else
       {
         rotary.resetPosition();
-      }*/
+      }
       break;
   }
 }
 
 void backButton ()
 {
-  switch (menuState)
+  if (page == HSVEdit || RGBEdit)
   {
-    case 0://Main Menu
-      break;
-    case 1://Artnet Menu
-      menuState = 0;
-      menuLocation = 0;
-      break;
-    case 2://Patterns
-      menuState = 0;
-      menuLocation = 0;
-      break;
-    case 3:
-      menuState = 0;
-      menuLocation = 0;
-      break;
-    case 4:
-      menuState = 0;
-      menuLocation = 0;
-      break;
-    case 5:
-      
-      //character editing
-      /*if (editChar == false)
-      {
-        menuState = 4;
-      }
-      else {
-        editChar = false;
-      }*/
-      break;
+    //add stuff, save to eeprom here?
   }
-
+  else if (page == StringEdit)
+  {
+    //what happens if i press button?
+  }
+  else
+  {
+    page = Main;
+    menuLocation = 0;
+  }
 }
+
+/*
+ * Menu Drawing
+ */
 
 void drawMenu()
 {
   oled.clear(PAGE);
   header();
-  switch (menuState)
+  switch (page)
   {
-    case 0:
+    case Main:
       mainMenu();
       break;
-    case 1:
+    case ArtNet:
       artnetMenu();
       break;
-    case 2:
+    case Patterns:
       patternMenu();
       break;
-    case 3:
+    case Colors:
       colorMenu();
       break;
-    case 4:
+    case Settings:
       settingsMenu();
       break;
-    case 5:
+    case StringEdit:
       changeStringMenu();
       break;
+    case HSVEdit:
+      //Pass "hsv" string into editColor menu
+      break;
+    case RGBEdit:
+      //editColorMenu("RGB");
+      break;
   }
   oled.display();
-}
-
-void changeStringMenu ()
-{
-  oled.setFontType(0);
-  oled.setCursor(0, 11);
-  switch (menuLocation)
-  {
-    case 0:
-      editString = ssid;
-      oled.print("SSID");
-      Serial.println("SSID");
-      break;
-    case 1:
-      editString = password;
-      oled.print("Password");
-      Serial.println("Password");
-      break;
-  }
-  oled.setCursor(0, 21);
-  for (int i = 0; i < strlen(editString) + 1; i++) {
-    if (i == charPosition)
-    {
-      oled.setColor(BLACK);
-      oled.write((int)editString[i]);
-      Serial.print("A");
-      Serial.print(editString[i]);
-      oled.setColor(WHITE);
-    }
-    else
-    {
-      oled.setColor(WHITE);
-      oled.write((int)editString[i]);
-      Serial.print(editString[i]);
-    }
-  }
-}
-
-void wifiLoading()
-{
-  oled.clear(PAGE);
-  oled.setCursor(0, 0);
-  oled.print("CONNECTING");
-  Serial.print("CONNECTING");
-  oled.display();
-}
-
-void header ()
-{
-  oled.setFontType(0);
-  oled.setCursor(0, 0);
-  oled.print("EYEZ");
-  Serial.print("EYEZ    ");
-  oled.setFontType(0);
-  switch (modeSelect) {
-    case 0:
-      oled.setCursor(46, 0);
-      oled.print("Off");
-      Serial.println("Off");
-      break;
-    case 1:
-      oled.setCursor(40, 0);
-      oled.print("Cyln");
-      Serial.println("CYLN");
-      break;
-    case 2:
-      oled.setCursor(46, 0);
-      oled.print("DMX");
-      Serial.println("DMX");
-      break;
-    case 3:
-      oled.setCursor(40, 0);
-      oled.print("Spin");
-      Serial.println("SPIN");
-      break;
-  }
-}
-
-void drawIndicator (int offset)
-{
-  int yPosition = 11 + (10 * menuLocation) + offset;
-  oled.setCursor(0, yPosition);
-  oled.write(253);
-  Serial.println(menuLocation);
 }
 
 void mainMenu ()
@@ -645,6 +501,91 @@ void settingsMenu ()
   drawIndicator(0);
 }
 
+void changeStringMenu ()
+{
+  oled.setFontType(0);
+  oled.setCursor(0, 11);
+  switch (menuLocation)
+  {
+    case 0:
+      editString = ssid;
+      oled.print("SSID");
+      Serial.println("SSID");
+      break;
+    case 1:
+      editString = password;
+      oled.print("Password");
+      Serial.println("Password");
+      break;
+  }
+  oled.setCursor(0, 21);
+  for (int i = 0; i < strlen(editString) + 1; i++) {
+    if (i == charPosition)
+    {
+      oled.setColor(BLACK);
+      oled.write((int)editString[i]);
+      Serial.print("A");
+      Serial.print(editString[i]);
+      oled.setColor(WHITE);
+    }
+    else
+    {
+      oled.setColor(WHITE);
+      oled.write((int)editString[i]);
+      Serial.print(editString[i]);
+    }
+  }
+}
+
+void wifiLoading()
+{
+  oled.clear(PAGE);
+  oled.setCursor(0, 0);
+  oled.print("CONNECTING");
+  Serial.print("CONNECTING");
+  oled.display();
+}
+
+void header ()
+{
+  oled.setFontType(0);
+  oled.setCursor(0, 0);
+  oled.print("EYEZ");
+  Serial.print("EYEZ    ");
+  oled.setFontType(0);
+  switch (pattern) {
+    case Off:
+      oled.setCursor(46, 0);
+      oled.print("Off");
+      Serial.println("Off");
+      break;
+    case Cylon:
+      oled.setCursor(40, 0);
+      oled.print("Cyln");
+      Serial.println("CYLN");
+      break;
+    case DMX:
+      oled.setCursor(46, 0);
+      oled.print("DMX");
+      Serial.println("DMX");
+      break;
+    case Ripple:
+      oled.setCursor(40, 0);
+      oled.print("Spin");
+      Serial.println("SPIN");
+      break;
+  }
+}
+
+void drawIndicator (int offset)
+{
+  uint8_t yPosition = 11 + (10 * menuLocation) + offset;
+  oled.setCursor(0, yPosition);
+  oled.write(253);
+  Serial.println(menuLocation);
+}
+
+
 void splashScreen ()
 {
   oled.invert(true);
@@ -654,6 +595,10 @@ void splashScreen ()
   delay(1500);
   oled.invert(false);
 }
+
+/*
+ *Color Patterns 
+ */
 
 void off()
 {
@@ -666,10 +611,83 @@ void off()
   delay(5);
 }
 
-void ISR ()
+void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* data)
 {
-  Serial.println("ROTARY");
-  rotary.loop();
+  sendFrame = 1;
+  // set brightness of the whole strip
+  if (universe == 15)
+  {
+    FastLED.setBrightness(data[0]);
+  }
+  // read universe and put into the right part of the display buffer
+  for (int i = 0; i < length / 3; i++)
+  {
+    int led = i + (universe - startUniverse) * (previousDataLength / 3);
+    if (led < numLeds / 2)
+    {
+      rightLeds[led] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
+    }
+    else
+    {
+      leftLeds[led - 170] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
+    }
+  }
+  previousDataLength = length;
+  FastLED.show();
+}
+
+void fadeall()
+{
+  for (int i = 0; i < numLeds; i++)
+  {
+    leftLeds[i].nscale8(250);
+    rightLeds[i].nscale8(250);
+  }
+}
+
+void cylon ()
+{
+  static uint8_t hue1 = 0;
+  static uint8_t hue2 = 0;
+  // First slide the led in one direction
+  for (int i = 0; i < numLeds / 2; i++) {
+    // Set the i'th led to red
+    leftLeds[i] = CHSV(hue1++, 255, 255);
+    rightLeds[i] = CHSV(hue2--, 255, 255);
+    // Show the leds
+    FastLED.show();
+    // now that we've shown the leds, reset the i'th led to black
+    // leds[i] = CRGB::Black;
+    fadeall();
+    // Wait a little bit before we loop around and do it again
+    delay(10);
+  }
+
+  // Now go in the other direction.
+  for (int i = (numLeds / 2) - 1; i >= 0; i--) {
+    // Set the i'th led to red
+    leftLeds[i] = CHSV(hue1++, 255, 255);
+    rightLeds[i] = CHSV(hue2--, 255, 255);
+    // Show the leds
+    FastLED.show();
+    // now that we've shown the leds, reset the i'th led to black
+    // leds[i] = CRGB::Black;
+    fadeall();
+    // Wait a little bit before we loop around and do it again
+    delay(10);
+  }
+}
+
+void gradientSpin ()
+{
+  for (int i = 0; i < 256; i++)
+  {
+    uint8_t gradientPosition = i + rotation;
+    setAngle(i, ColorFromPalette(currentPalette, gradientPosition, 255, currentBlending));
+  }
+  rotation++;
+  FastLED.show();
+  //delay(10);
 }
 
 void setup()
@@ -677,51 +695,56 @@ void setup()
   delay(1000);
   EEPROM.begin(512);
   Serial.begin(115200);
-  FastLED.addLeds<APA102, LEFT_DATA_PIN, LEFT_CLOCK_PIN, BGR>(leftLeds, numLeds);
-  FastLED.addLeds<APA102, RIGHT_DATA_PIN, RIGHT_CLOCK_PIN, BGR>(rightLeds, numLeds);
-  //FastLED.setBrightness(195);
+  FastLED.addLeds<APA102, LEFT_DATA_PIN, CLOCK_PIN, BGR>(leftLeds, numLeds);
+  FastLED.addLeds<APA102, RIGHT_DATA_PIN, CLOCK_PIN, BGR>(rightLeds, numLeds);
+  //FastLED.setBrightness(195);//Waiting on ring tests for max brightness
   FastLED.setBrightness(32);
   off();
+  mapEye();
+  
+  //Rotary Encoder
   pinMode(ROTARY_PIN1, INPUT_PULLUP);
-  digitalWrite(ROTARY_PIN1, HIGH);
   pinMode(ROTARY_PIN2, INPUT_PULLUP);
+  digitalWrite(ROTARY_PIN1, HIGH);
   digitalWrite(ROTARY_PIN2, HIGH);
   rotary.setChangedHandler(checkRotary);
-  pinMode(buttonPin1, INPUT);
-  digitalWrite(buttonPin1, LOW);
-  attachInterrupt(digitalPinToInterrupt(buttonPin1), checkButton, RISING);  
+  attachInterrupt(digitalPinToInterrupt(ROTARY_PIN1), encoderCheck, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ROTARY_PIN2), encoderCheck, CHANGE);
+  
+  //Buttons
+  pinMode(buttonPin1, INPUT);  
   pinMode(buttonPin2, INPUT);
   digitalWrite(buttonPin1, LOW);
+  digitalWrite(buttonPin2, LOW);
+  attachInterrupt(digitalPinToInterrupt(buttonPin1), checkButton, RISING);  
   attachInterrupt(digitalPinToInterrupt(buttonPin2), checkButton, RISING);
-  attachInterrupt(digitalPinToInterrupt(ROTARY_PIN1), ISR, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(ROTARY_PIN2), ISR, CHANGE);
-  mapEye();
-  oled.begin();    // Initialize the OLED
-  oled.clear(ALL); // Clear the display's internal memory
-  oled.display();  // Display what's in the buffer (splashscreen)
-  delay(500);     // Delay 500 ms
+  
+  //Start Screen (get rid of connectWiFi? Shorten timeout?)
+  oled.begin();
+  oled.clear(ALL);
+  oled.display();
+  delay(500);
   splashScreen();
   ConnectWifi();
   drawMenu();
   artnet.begin();
-  // onDmxFrame will execute every time a packet is received by the ESP32
   artnet.setArtDmxCallback(onDmxFrame);
 }
 
 void loop()
 {
-  switch (modeSelect)
+  switch (pattern)
   {
-    case 0:
+    case Off:
       off();
       break;
-    case 1:
+    case Cylon:
       cylon();
       break;
-    case 2:
+    case ArtNet:
       artnet.read();
       break;
-    case 3:
+    case Ripple://gotta fix this when I add more patterns
       gradientSpin();
       break;
   }
