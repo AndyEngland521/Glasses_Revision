@@ -10,8 +10,8 @@
 
 #define ROTARY_PIN1 32
 #define ROTARY_PIN2 14
-#define buttonPin1 27
-#define buttonPin2 33
+#define buttonPin1 33
+#define buttonPin2 27
 #define PIN_RESET 13 //OLED
 #define DC_JUMPER 1 //OLED
 #define LEFT_DATA_PIN 21
@@ -19,14 +19,24 @@
 #define CLOCK_PIN 16
 
 ESPRotary rotary = ESPRotary(ROTARY_PIN1, ROTARY_PIN2, 4);
-MicroOLED oled(PIN_RESET, DC_JUMPER);//Change hardware.cpp to initialize proper wire pins for esp32 WROOOM(23,22), may change for sparkfun wroom
+//MicroOLED oled(PIN_RESET, DC_JUMPER);//Change hardware.cpp to initialize proper wire pins for esp32 WROOOM(23,22), may change for sparkfun wroom
 
 //Menus (Consider a struct once things are nailed down)
 enum colorMode {
   Off,
   DMX,
   Cylon,
-  Ripple
+  Ripple,
+  ClassicRezz,
+  RedStatic,
+  RainbowRezz,
+  RainbowStatic,
+  RandomRipple,
+  PlaceHolder1,
+  PlaceHolder2,
+  PlaceHolder3,
+  PlaceHolder4,
+  PlaceHolder5,
 };
 enum menu {
   Main = 0,
@@ -71,8 +81,6 @@ uint8_t rightEyeMap[5][255];
 const uint8_t circleNum[5] = {4, 16, 25, 36, 45};
 const float stepsPerRow[5] = {64, 16, 10.24, 7.11111111, 5.6888888};
 uint8_t numPrev[5] = {0, 4, 20, 45, 81};
-//Value to rotate around circle
-uint8_t rotation = 0;
 
 // Artnet settings
 ArtnetWifi artnet;
@@ -91,6 +99,17 @@ CRGB blue = CRGB::Blue;
 CRGB magenta = CRGB::Magenta;
 CRGB gray = CRGB::Gray;
 CRGB black = CRGB::Black;
+
+//Pattern Handling Variables
+uint8_t hue = 0;
+uint8_t sat = 0;
+uint8_t angle = 0;
+uint8_t angleLeft = 0;
+uint8_t angleRight = 0;
+uint8_t rotation = 0;
+uint8_t rotationLeft = 0;
+uint8_t rotationRight = 0;
+int rotationDirection = 1;
 
 //Palette Stuff
 CRGBPalette16 currentPalette =
@@ -130,36 +149,37 @@ void mapEye () //we map LED's to a 360 degree circle where 360 == 255
   }
 }
 
-void setRowAngle (uint8_t row, uint8_t angle, CRGB color)
+void setRowAngle (uint8_t row, uint8_t angleValue, CRGB color)
 {
-  leftLeds[leftEyeMap[row][angle]] = color;
-  rightLeds[rightEyeMap[row][angle]] = color;
+  leftLeds[leftEyeMap[row][angleValue]] = color;
+  rightLeds[rightEyeMap[row][angleValue]] = color;
 }
 
-void setAngle (uint8_t angle, CRGB color)
+void setLeftRowAngle (uint8_t row, uint8_t angleValue, CRGB color)
+{
+  leftLeds[leftEyeMap[row][angleValue]] = color;
+}
+
+void setRightRowAngle (uint8_t row, uint8_t angleValue, CRGB color)
+{
+  rightLeds[rightEyeMap[row][angleValue]] = color;
+}
+
+void setAngle (uint8_t angleValue, CRGB color)
 {
   for (int row = 0; row < 5; row++)
   {
-    setRowAngle(row, angle, color);
+    setRowAngle(row, angleValue, color);
   }
 }
 
 //This sets a circle or row to one color.
-void setRow(uint8_t row, CRGB color)
+void setRow (uint8_t row, CRGB color)
 {
-  uint8_t numPrev;
-  if (row == 0)
+  for (int angleValue = 0; angleValue < 255; angleValue++)
   {
-    numPrev = 0;
-  }
-  else
-  {
-    numPrev = circleNum[row - 1];
-  }
-  for (int ledPosition = numPrev; ledPosition < numPrev + circleNum[row]; ledPosition++)
-  {
-    leftLeds[ledPosition] = color;
-    rightLeds[ledPosition] = color;
+    leftLeds[leftEyeMap[row][angleValue]] = color;
+    rightLeds[rightEyeMap[row][angleValue]] = color;
   }
 }
 
@@ -169,7 +189,7 @@ boolean ConnectWifi(void)
   boolean state = true;
   int i = 0;
 
-  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) 
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS))
   {
     Serial.println("STA Failed to configure");
   }
@@ -208,8 +228,8 @@ int wifiStatus()
 }
 
 /*
- * Button / Rotary Handling
- */
+   Button / Rotary Handling
+*/
 
 void checkRotary (ESPRotary& rotary)
 {
@@ -221,25 +241,25 @@ void checkRotary (ESPRotary& rotary)
   {
     if (editColor == true)
     {
-      switch(menuLocation)
+      switch (menuLocation)
       {
         case 0:
-        uint8_t colorValue = currentPalette[0];
-        Serial.println(currentPalette[1]);
-        currentPalette[1] = colorValue;
-        Serial.println(currentPalette[1]);
+          uint8_t colorValue = currentPalette[0];
+          Serial.println(currentPalette[1]);
+          currentPalette[1] = colorValue;
+          Serial.println(currentPalette[1]);
       }
     }
     //Code for editing characters
     /*
-    if (editChar == false)
-    {
+      if (editChar == false)
+      {
       charPosition = rotary.getPosition() % (strlen(editString) + 1);
-    }
-    else
-    {
+      }
+      else
+      {
       editString[charPosition] = abs(rotary.getPosition() % 96) + 32;
-    }*/
+      }*/
   }
   drawMenu();
 }
@@ -328,7 +348,7 @@ void selectButton ()
           page = HSVEdit;
           menuLocation = 0;
           break;
-        case 1:       
+        case 1:
           page = RGBEdit;
           menuLocation = 0;
           break;
@@ -342,7 +362,7 @@ void selectButton ()
           break;
       }
       break;
-    case RGBEdit://color editing    
+    case RGBEdit://color editing
       //code to edit characters in a string using rotary
       if (editColor == true)
       {
@@ -387,12 +407,12 @@ void backButton ()
 }
 
 /*
- * Menu Drawing
- */
+   Menu Drawing
+*/
 
 void drawMenu()
 {
-  oled.clear(PAGE);
+  //oled.clear(PAGE);
   header();
   switch (page)
   {
@@ -421,117 +441,117 @@ void drawMenu()
       //editColorMenu("RGB");
       break;
   }
-  oled.display();
+  //oled.display();
 }
 
 void mainMenu ()
 {
-  oled.setFontType(0);
-  oled.setCursor(7, 11);
-  oled.print("ArtNet");
+  //oled.setFontType(0);
+  //oled.setCursor(7, 11);
+  //oled.print("ArtNet");
   Serial.println("ArtNet");
-  oled.setCursor(7, 21);
-  oled.print("Patterns");
+  //oled.setCursor(7, 21);
+  //oled.print("Patterns");
   Serial.println("Patterns");
-  oled.setCursor(7, 31);
-  oled.print("Colors");
+  //oled.setCursor(7, 31);
+  //oled.print("Colors");
   Serial.println("Colors");
-  oled.setCursor(7, 41);
-  oled.print("Settings");
+  //oled.setCursor(7, 41);
+  //oled.print("Settings");
   Serial.println("Settings");
   drawIndicator(0);
 }
 
 void artnetMenu ()
 {
-  oled.setFontType(0);
-  oled.setCursor(7, 11);
+  //oled.setFontType(0);
+  //oled.setCursor(7, 11);
   if (WiFi.status() == WL_CONNECTED)
   {
     String wifi = WiFi.localIP().toString().substring(8, 13);
-    oled.print("IP: ");
+    //oled.print("IP: ");
     Serial.print("IP: ");
-    oled.print(wifi);
+    //oled.print(wifi);
     Serial.println(wifi);
   }
   else
   {
-    oled.print("Connect?");
+    //oled.print("Connect?");
     Serial.println("Connect?");
   }
-  oled.setCursor(7, 21);
-  oled.print("Off");
+  //oled.setCursor(7, 21);
+  //oled.print("Off");
   Serial.print("Off");
   drawIndicator(0);
 }
 
 void patternMenu ()
 {
-  oled.setFontType(0);
-  oled.setCursor(7, 11);
-  oled.print("Cylon");
+  //oled.setFontType(0);
+  //oled.setCursor(7, 11);
+  //oled.print("Cylon");
   Serial.println("Cylon");
-  oled.setCursor(7, 21);
-  oled.print("Spin");
+  //oled.setCursor(7, 21);
+  //oled.print("Spin");
   Serial.println("Spin");
   drawIndicator(0);
 }
 
 void colorMenu ()
 {
-  oled.setFontType(0);
-  oled.setCursor(7, 11);
-  oled.print("HSV");
+  //oled.setFontType(0);
+  //oled.setCursor(7, 11);
+  //oled.print("HSV");
   Serial.println("HSV");
-  oled.setCursor(7, 21);
-  oled.print("RGB");
+  //oled.setCursor(7, 21);
+  //oled.print("RGB");
   Serial.println("RGB");
   drawIndicator(0);
 }
 
 void settingsMenu ()
 {
-  oled.setFontType(0);
-  oled.setCursor(7, 11);
-  oled.print("SSID");
+  //oled.setFontType(0);
+  //oled.setCursor(7, 11);
+  //oled.print("SSID");
   Serial.println("SSID");
-  oled.setCursor(7, 21);
-  oled.print("Password");
+  //oled.setCursor(7, 21);
+  //oled.print("Password");
   Serial.println("Password");
   drawIndicator(0);
 }
 
 void changeStringMenu ()
 {
-  oled.setFontType(0);
-  oled.setCursor(0, 11);
+  //oled.setFontType(0);
+  //oled.setCursor(0, 11);
   switch (menuLocation)
   {
     case 0:
       editString = ssid;
-      oled.print("SSID");
+      //oled.print("SSID");
       Serial.println("SSID");
       break;
     case 1:
       editString = password;
-      oled.print("Password");
+      //oled.print("Password");
       Serial.println("Password");
       break;
   }
-  oled.setCursor(0, 21);
+  //oled.setCursor(0, 21);
   for (int i = 0; i < strlen(editString) + 1; i++) {
     if (i == charPosition)
     {
-      oled.setColor(BLACK);
-      oled.write((int)editString[i]);
+      //oled.setColor(BLACK);
+      //oled.write((int)editString[i]);
       Serial.print("A");
       Serial.print(editString[i]);
-      oled.setColor(WHITE);
+      //oled.setColor(WHITE);
     }
     else
     {
-      oled.setColor(WHITE);
-      oled.write((int)editString[i]);
+      //oled.setColor(WHITE);
+      //oled.write((int)editString[i]);
       Serial.print(editString[i]);
     }
   }
@@ -539,39 +559,39 @@ void changeStringMenu ()
 
 void wifiLoading()
 {
-  oled.clear(PAGE);
-  oled.setCursor(0, 0);
-  oled.print("CONNECTING");
+  //oled.clear(PAGE);
+  //oled.setCursor(0, 0);
+  //oled.print("CONNECTING");
   Serial.print("CONNECTING");
-  oled.display();
+  //oled.display();
 }
 
 void header ()
 {
-  oled.setFontType(0);
-  oled.setCursor(0, 0);
-  oled.print("EYEZ");
+  //oled.setFontType(0);
+  //oled.setCursor(0, 0);
+  //oled.print("EYEZ");
   Serial.print("EYEZ    ");
-  oled.setFontType(0);
+  //oled.setFontType(0);
   switch (pattern) {
     case Off:
-      oled.setCursor(46, 0);
-      oled.print("Off");
+      //oled.setCursor(46, 0);
+      //oled.print("Off");
       Serial.println("Off");
       break;
     case Cylon:
-      oled.setCursor(40, 0);
-      oled.print("Cyln");
+      //oled.setCursor(40, 0);
+      //oled.print("Cyln");
       Serial.println("CYLN");
       break;
     case DMX:
-      oled.setCursor(46, 0);
-      oled.print("DMX");
+      //oled.setCursor(46, 0);
+      //oled.print("DMX");
       Serial.println("DMX");
       break;
     case Ripple:
-      oled.setCursor(40, 0);
-      oled.print("Spin");
+      //oled.setCursor(40, 0);
+      //oled.print("Spin");
       Serial.println("SPIN");
       break;
   }
@@ -580,25 +600,25 @@ void header ()
 void drawIndicator (int offset)
 {
   uint8_t yPosition = 11 + (10 * menuLocation) + offset;
-  oled.setCursor(0, yPosition);
-  oled.write(253);
+  //oled.setCursor(0, yPosition);
+  //oled.write(253);
   Serial.println(menuLocation);
 }
 
 
 void splashScreen ()
 {
-  oled.invert(true);
-  oled.clear(PAGE);
-  oled.drawBitmap(Splashscreen);
-  oled.display();
+  //oled.invert(true);
+  //oled.clear(PAGE);
+  //oled.drawBitmap(Splashscreen);
+  //oled.display();
   delay(1500);
-  oled.invert(false);
+  //oled.invert(false);
 }
 
 /*
- *Color Patterns 
- */
+  Color Patterns
+*/
 
 void off()
 {
@@ -636,12 +656,12 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
   FastLED.show();
 }
 
-void fadeall()
+void fadeall(uint8_t fadeAmount = 230)
 {
   for (int i = 0; i < numLeds; i++)
   {
-    leftLeds[i].nscale8(250);
-    rightLeds[i].nscale8(250);
+    leftLeds[i].nscale8(fadeAmount);
+    rightLeds[i].nscale8(fadeAmount);
   }
 }
 
@@ -678,6 +698,24 @@ void cylon ()
   }
 }
 
+void classicRezz ()
+{
+  for (int row = 0; row < 5; row++)
+  {
+    angleLeft = -16 * row + rotationLeft;
+    angleRight = 16 * row + rotationRight;
+    setLeftRowAngle(row, angleLeft, CRGB::Red);
+    setLeftRowAngle(row, angleLeft - 127, CRGB::Red);
+    setRightRowAngle(row, angleRight, CRGB::Red);
+    setRightRowAngle(row, angleRight - 127, CRGB::Red);
+  }
+  fadeall(235);
+  rotationLeft++;
+  rotationRight--;
+  FastLED.show();
+  delay(7);
+}
+
 void gradientSpin ()
 {
   for (int i = 0; i < 256; i++)
@@ -685,9 +723,172 @@ void gradientSpin ()
     uint8_t gradientPosition = i + rotation;
     setAngle(i, ColorFromPalette(currentPalette, gradientPosition, 255, currentBlending));
   }
+  
   rotation++;
   FastLED.show();
   //delay(10);
+}
+
+void redStatic ()
+{
+  int randomValue;
+  for (int led = 0; led < 126; led++)
+  {
+    randomValue = random(25);//Changes the odds of a pixel being turned on
+    if (randomValue == 0)
+    {
+      leftLeds[led] = CRGB::Red;
+    }
+    else if (randomValue == 1)
+    {
+      rightLeds[led] = CRGB::Red;
+    }
+  }
+  FastLED.show();
+  fadeall(220);
+  delay(5);
+}
+
+void rainbowRezz ()
+{
+  for (int row = 0; row < 5; row++)
+  {
+    angle = -16 * row + rotation;
+    hue = 24 * row + rotation;
+    setRowAngle(row, angle, CHSV(hue, 255, 255));
+    setRowAngle(row, angle - 127, CHSV(hue, 255, 255));
+  }
+  fadeall(230);
+  rotation++;
+  FastLED.show();
+  delay(7);
+}
+
+void rainbowStatic ()
+{
+  int randomValue;
+  for (int led = 0; led < 126; led++)
+  {
+    randomValue = random(25);//Changes the odds of a pixel being turned on
+    hue = random(255);
+    sat = 191 + random(64);
+    if (randomValue == 0)
+    {
+      leftLeds[led] = CHSV(hue, sat, 255);
+    }
+    else if (randomValue == 1)
+    {
+      rightLeds[led] = CHSV(hue, sat, 255);
+    }
+  }
+  FastLED.show();
+  fadeall(220);
+  delay(5);
+}
+
+void randomRipple ()
+{
+  hue = random(255);
+  sat = 191 + random(64);
+  for (int row = 0; row < 5; row++)
+  {
+    setRow(row, CHSV(hue, sat, 255));
+    FastLED.show();
+    for (int i = 0; i < 5; i++)
+    {
+      FastLED.show();
+      fadeall();
+      delay(5);
+    }
+  }
+  uint16_t randomWait = random(100); //gives us a small wait time
+  for (int i = 0; i < randomWait; i++)
+  {
+    FastLED.show();
+    fadeall();
+    delay(5);
+  }
+}
+
+void placeHolder1()
+{
+  for (int row = 0; row < 5; row++)
+  {
+    angle = 16 * sin(rotation / 42.666667) * row + rotation;
+    setRowAngle(row, angle, CRGB::Red);
+    setRowAngle(row, angle - 127, CRGB::Red);
+  }
+  fadeall(235);
+  rotation++;
+  FastLED.show();
+  delay(7);
+}
+
+void placeHolder2()
+{
+  
+}
+
+void placeHolder3()
+{
+  
+}
+
+void placeHolder4()
+{
+  
+}
+
+void placeHolder5()
+{
+  
+}
+
+void demoPatternChange()
+{
+  switch (pattern)
+  {
+    case Off:
+      pattern = RedStatic;
+      break;
+    case Cylon:
+      pattern = Ripple;
+      break;
+    case Ripple:
+      pattern = RedStatic;
+      break;
+    case RedStatic:
+      pattern = RainbowStatic;
+      break;
+    case RainbowStatic:
+      pattern = ClassicRezz;
+      break;
+    case ClassicRezz:
+      pattern = RainbowRezz;
+      break;
+    case RainbowRezz:
+      pattern = RandomRipple;
+      break;
+    case RandomRipple:
+      pattern = PlaceHolder1;
+      break;
+    case PlaceHolder1:
+      pattern = PlaceHolder2;
+      break;
+    case PlaceHolder2:
+      pattern = PlaceHolder3;
+      break;
+    case PlaceHolder3:
+      pattern = PlaceHolder4;
+      break;
+    case PlaceHolder4:
+      pattern = PlaceHolder5;
+      break;
+    case PlaceHolder5:
+      pattern = Off;
+      break;
+  }
+  delay(10);
 }
 
 void setup()
@@ -701,7 +902,7 @@ void setup()
   FastLED.setBrightness(32);
   off();
   mapEye();
-  
+
   //Rotary Encoder
   pinMode(ROTARY_PIN1, INPUT_PULLUP);
   pinMode(ROTARY_PIN2, INPUT_PULLUP);
@@ -710,22 +911,26 @@ void setup()
   rotary.setChangedHandler(checkRotary);
   attachInterrupt(digitalPinToInterrupt(ROTARY_PIN1), encoderCheck, CHANGE);
   attachInterrupt(digitalPinToInterrupt(ROTARY_PIN2), encoderCheck, CHANGE);
-  
+
   //Buttons
-  pinMode(buttonPin1, INPUT);  
+  pinMode(buttonPin1, INPUT);
   pinMode(buttonPin2, INPUT);
   digitalWrite(buttonPin1, LOW);
   digitalWrite(buttonPin2, LOW);
-  attachInterrupt(digitalPinToInterrupt(buttonPin1), checkButton, RISING);  
+  attachInterrupt(digitalPinToInterrupt(buttonPin1), checkButton, RISING);
   attachInterrupt(digitalPinToInterrupt(buttonPin2), checkButton, RISING);
-  
+
+  //ColorDemo
+  pinMode(0, INPUT);
+  attachInterrupt(digitalPinToInterrupt(0), demoPatternChange, FALLING);
+
   //Start Screen (get rid of connectWiFi? Shorten timeout?)
-  oled.begin();
-  oled.clear(ALL);
-  oled.display();
+  //oled.begin();
+  //oled.clear(ALL);
+  //oled.display();
   delay(500);
   splashScreen();
-  ConnectWifi();
+  //ConnectWifi();
   drawMenu();
   artnet.begin();
   artnet.setArtDmxCallback(onDmxFrame);
@@ -746,6 +951,36 @@ void loop()
       break;
     case Ripple://gotta fix this when I add more patterns
       gradientSpin();
+      break;
+    case ClassicRezz:
+      classicRezz();
+      break;
+    case RedStatic:
+      redStatic();
+      break;
+    case RainbowRezz:
+      rainbowRezz();
+      break;
+    case RainbowStatic:
+      rainbowStatic();
+      break;
+    case RandomRipple:
+      randomRipple();
+      break;
+    case PlaceHolder1:
+      placeHolder1();
+      break;
+    case PlaceHolder2:
+      placeHolder2();
+      break;
+    case PlaceHolder3:
+      placeHolder3();
+      break;
+    case PlaceHolder4:
+      placeHolder4();
+      break;
+    case PlaceHolder5:
+      placeHolder5();
       break;
   }
 }
